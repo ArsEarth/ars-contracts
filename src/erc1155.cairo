@@ -47,6 +47,18 @@ trait IERC1155<TContractState> {
         r: felt252,
         s: felt252,
     ) -> felt252;
+
+    fn mulMint(
+        ref self: TContractState,
+        public_key: felt252,
+        issuer: felt252,
+        receiver: ContractAddress,
+        tid: Array<felt252>,
+        checksid: Array<felt252>,
+        amt: Array<felt252>,
+        r: Array<felt252>,
+        s: Array<felt252>,
+    ) -> felt252;
 }
 
 #[starknet::contract]
@@ -243,7 +255,13 @@ mod erc_1155 {
             r: felt252,
             s: felt252,
         ) -> felt252 {
-            assert(_verifySign(public_key, issuer, receiver, tid, checksid, amt, r, s) == starknet::VALIDATED);
+            assert(self._verifySign(public_key, issuer, receiver, tid, checksid, amt, r, s) == starknet::VALIDATED, 'valid failed');
+            let tokenid = u256_from_felt252(tid);
+            let thischecksid = u256_from_felt252(checksid);
+            let amount = u256_from_felt252(amt);
+            self._mint(receiver, tokenid, amount, ArrayTrait::new().span());
+            self._lastCheckId.write((tokenid, receiver), thischecksid);
+            starknet::VALIDATED // Return validation status
         }
 
         fn mulMint(
@@ -257,24 +275,29 @@ mod erc_1155 {
             r: Array<felt252>,
             s: Array<felt252>,
         ) -> felt252 {
-            let tokenid = u256_from_felt252(tid);
-            let thischecksid = u256_from_felt252(checksid);
-            let lastId = self._lastCheckId.read((tokenid, receiver));
-            assert(lastId + 1 == thischecksid, 'CHECKS ID NOT VALID');
-            let message_hash = pedersen(pedersen(pedersen(pedersen(issuer, contract_address_to_felt252(receiver)), tid), checksid), amt);
-            assert(
-                check_ecdsa_signature(
-                    message_hash: message_hash,
-                    public_key: public_key,
-                    signature_r: r,
-                    signature_s: s,
-                ),
-                'INVALID_SIGNATURE',
-            );
-            let amount = u256_from_felt252(amt);
-            self._mint(receiver, tokenid, amount, ArrayTrait::new().span());
-            self._lastCheckId.write((tokenid, receiver), thischecksid);
-            starknet::VALIDATED
+            let mut i: usize = 0;
+
+            let _tid = tid.clone();
+            let _checksid = checksid.clone();
+            let _amt = amt.clone();
+            let _r = r.clone();
+            let _s = s.clone();
+            loop {
+                if i >= tid.len() {
+                    break;
+                }
+
+                assert(self._verifySign(public_key, issuer, receiver, *_tid.at(i), *_checksid.at(i), *_amt.at(i), *_r.at(i), *_s.at(i)) == starknet::VALIDATED, 'valid failed');
+
+                let tokenid = u256_from_felt252(*_tid.at(i));
+                let thischecksid = u256_from_felt252(*_checksid.at(i));
+                let amount = u256_from_felt252(*_amt.at(i));
+                self._mint(receiver, tokenid, amount, ArrayTrait::new().span());
+                self._lastCheckId.write((tokenid, receiver), thischecksid);
+                i += 1;
+            };
+
+            starknet::VALIDATED // Return validation status
         }
 
 
@@ -296,8 +319,8 @@ mod erc_1155 {
             checksid: felt252,
             amt: felt252,
             r: felt252,
-            s: felt252,
-        ) {
+            s: felt252
+        ) -> felt252 {
             let tokenid = u256_from_felt252(tid);
             let thischecksid = u256_from_felt252(checksid);
             let lastId = self._lastCheckId.read((tokenid, receiver));
@@ -312,9 +335,6 @@ mod erc_1155 {
                 ),
                 'INVALID_SIGNATURE',
             );
-            let amount = u256_from_felt252(amt);
-            self._mint(receiver, tokenid, amount, ArrayTrait::new().span());
-            self._lastCheckId.write((tokenid, receiver), thischecksid);
             starknet::VALIDATED
         }
 
