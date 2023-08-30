@@ -6,11 +6,7 @@ trait IERC1155<TContractState> {
     fn balance_of(self: @TContractState, account: ContractAddress, id: u256) -> u256;
     fn balance_of_batch(self: @TContractState, accounts: Array<ContractAddress>, ids: Array<u256>) -> Array<u256>;
     fn is_approved_for_all(self: @TContractState, account: ContractAddress, operator: ContractAddress) -> bool;
-    fn test_validate_sign(self: @TContractState, message_hash: felt252, public_key: felt252, r: felt252, s: felt252) -> felt252;
-    fn test_pedersen1(self: @TContractState, a: felt252, b: ContractAddress) -> felt252;
-    fn test_pedersen2(self: @TContractState, a: felt252, b: felt252, c: felt252) -> felt252;
-    fn test_pedersen3(self: @TContractState, a: felt252, b: felt252, c: felt252, d: felt252) -> felt252;
-    fn test_pedersen(self: @TContractState, a: felt252, b: felt252, c: felt252, d: felt252, e: felt252) -> felt252;
+    fn last_checks(self: @TContractState, account: ContractAddress, tid: u256) -> u256;
 
     fn set_approval_for_all(ref self: TContractState, operator: ContractAddress, approved: bool);
     // Span<felt252> here is for bytes in Solidity
@@ -58,7 +54,7 @@ trait IERC1155<TContractState> {
         amt: Array<felt252>,
         r: Array<felt252>,
         s: Array<felt252>,
-    ) -> felt252;
+    );
 }
 
 #[starknet::contract]
@@ -166,32 +162,9 @@ mod erc_1155 {
         fn is_approved_for_all(self: @ContractState, account: ContractAddress, operator: ContractAddress) -> bool {
             self._operator_approvals.read((account, operator))
         }
-        fn test_validate_sign(self: @ContractState, message_hash: felt252, public_key: felt252, r: felt252, s: felt252) -> felt252 {
-
-            // Verify ECDSA signature
-            assert(
-                check_ecdsa_signature(
-                    message_hash: message_hash,
-                    public_key: public_key,
-                    signature_r: r,
-                    signature_s: s,
-                ),
-                'INVALID_SIGNATURE',
-            );
-
-            starknet::VALIDATED // Return validation status
-        }
-        fn test_pedersen1(self: @ContractState, a: felt252, b: ContractAddress) -> felt252 {
-            pedersen(a, contract_address_to_felt252(b))
-        }
-        fn test_pedersen2(self: @ContractState, a: felt252, b: felt252, c: felt252) -> felt252 {
-            pedersen(pedersen(a, b),c)
-        }
-        fn test_pedersen3(self: @ContractState, a: felt252, b: felt252, c: felt252, d: felt252) -> felt252 {
-            pedersen(pedersen(pedersen(a, b),c),d)
-        }
-        fn test_pedersen(self: @ContractState, a: felt252, b: felt252, c: felt252, d: felt252, e: felt252) -> felt252 {
-            pedersen(pedersen(pedersen(pedersen(a, b),c),d),e)
+        fn last_checks(self: @ContractState,  account: ContractAddress, tid: u256) -> u256 {
+            assert(!account.is_zero(), 'query for the zero address');
+            self._lastCheckId.read((tid, account))
         }
 
         fn set_approval_for_all(ref self: ContractState, operator: ContractAddress, approved: bool) {
@@ -254,14 +227,14 @@ mod erc_1155 {
             amt: felt252,
             r: felt252,
             s: felt252,
-        ) -> felt252 {
+        ) {
             assert(self._verifySign(public_key, issuer, receiver, tid, checksid, amt, r, s) == starknet::VALIDATED, 'valid failed');
             let tokenid = u256_from_felt252(tid);
             let thischecksid = u256_from_felt252(checksid);
             let amount = u256_from_felt252(amt);
             self._mint(receiver, tokenid, amount, ArrayTrait::new().span());
             self._lastCheckId.write((tokenid, receiver), thischecksid);
-            starknet::VALIDATED // Return validation status
+            
         }
 
         fn mulMint(
@@ -274,7 +247,7 @@ mod erc_1155 {
             amt: Array<felt252>,
             r: Array<felt252>,
             s: Array<felt252>,
-        ) -> felt252 {
+        ) {
             let mut i: usize = 0;
 
             let _tid = tid.clone();
@@ -297,9 +270,41 @@ mod erc_1155 {
                 i += 1;
             };
 
-            starknet::VALIDATED // Return validation status
         }
 
+        func unite(
+            ref self: ContractState,
+            public_key: felt252,
+            issuer: felt252,
+            receiver: ContractAddress,
+            tid: Array<felt252>,
+            checksid: Array<felt252>,
+            amt: Array<felt252>,
+            r: Array<felt252>,
+            s: Array<felt252>,
+        ) {
+            let mut i: usize = 0;
+
+            let _tid = tid.clone();
+            let _checksid = checksid.clone();
+            let _amt = amt.clone();
+            let _r = r.clone();
+            let _s = s.clone();
+            loop {
+                if i >= tid.len() {
+                    break;
+                }
+
+                assert(self._verifySign(public_key, issuer, receiver, *_tid.at(i), *_checksid.at(i), *_amt.at(i), *_r.at(i), *_s.at(i)) == starknet::VALIDATED, 'valid failed');
+
+                let tokenid = u256_from_felt252(*_tid.at(i));
+                let thischecksid = u256_from_felt252(*_checksid.at(i));
+                let amount = u256_from_felt252(*_amt.at(i));
+                self._mint(receiver, tokenid, amount, ArrayTrait::new().span());
+                self._lastCheckId.write((tokenid, receiver), thischecksid);
+                i += 1;
+            };
+        }
 
     }
 
