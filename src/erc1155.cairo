@@ -38,11 +38,12 @@ trait IERC1155<TContractState> {
         issuer: felt252,
         receiver: ContractAddress,
         tid: felt252,
-        checksid: felt252,
+        startid: felt252,
+        endid: felt252,
         amt: felt252,
         r: felt252,
         s: felt252,
-    ) -> felt252;
+    );
 
     fn mulMint(
         ref self: TContractState,
@@ -50,7 +51,8 @@ trait IERC1155<TContractState> {
         issuer: felt252,
         receiver: ContractAddress,
         tid: Array<felt252>,
-        checksid: Array<felt252>,
+        startid: Array<felt252>,
+        endid: Array<felt252>,
         amt: Array<felt252>,
         r: Array<felt252>,
         s: Array<felt252>,
@@ -223,17 +225,18 @@ mod erc_1155 {
             issuer: felt252,
             receiver: ContractAddress,
             tid: felt252,
-            checksid: felt252,
+            startid: felt252,
+            endid: felt252,
             amt: felt252,
             r: felt252,
             s: felt252,
         ) {
-            assert(self._verifySign(public_key, issuer, receiver, tid, checksid, amt, r, s) == starknet::VALIDATED, 'valid failed');
+            assert(self._verifySign(public_key, issuer, receiver, tid, startid, endid, amt, r, s) == starknet::VALIDATED, 'valid failed');
             let tokenid = u256_from_felt252(tid);
-            let thischecksid = u256_from_felt252(checksid);
+            let endchecksid = u256_from_felt252(endid);
             let amount = u256_from_felt252(amt);
             self._mint(receiver, tokenid, amount, ArrayTrait::new().span());
-            self._lastCheckId.write((tokenid, receiver), thischecksid);
+            self._lastCheckId.write((tokenid, receiver), endchecksid);
             
         }
 
@@ -243,7 +246,8 @@ mod erc_1155 {
             issuer: felt252,
             receiver: ContractAddress,
             tid: Array<felt252>,
-            checksid: Array<felt252>,
+            startid: Array<felt252>,
+            endid: Array<felt252>,
             amt: Array<felt252>,
             r: Array<felt252>,
             s: Array<felt252>,
@@ -251,7 +255,8 @@ mod erc_1155 {
             let mut i: usize = 0;
 
             let _tid = tid.clone();
-            let _checksid = checksid.clone();
+            let _startid = startid.clone();
+            let _endid = endid.clone();
             let _amt = amt.clone();
             let _r = r.clone();
             let _s = s.clone();
@@ -260,50 +265,16 @@ mod erc_1155 {
                     break;
                 }
 
-                assert(self._verifySign(public_key, issuer, receiver, *_tid.at(i), *_checksid.at(i), *_amt.at(i), *_r.at(i), *_s.at(i)) == starknet::VALIDATED, 'valid failed');
+                assert(self._verifySign(public_key, issuer, receiver, *_tid.at(i), *_startid.at(i), *_endid.at(i), *_amt.at(i), *_r.at(i), *_s.at(i)) == starknet::VALIDATED, 'valid failed');
 
                 let tokenid = u256_from_felt252(*_tid.at(i));
-                let thischecksid = u256_from_felt252(*_checksid.at(i));
+                let endchecksid = u256_from_felt252(*_endid.at(i));
                 let amount = u256_from_felt252(*_amt.at(i));
                 self._mint(receiver, tokenid, amount, ArrayTrait::new().span());
-                self._lastCheckId.write((tokenid, receiver), thischecksid);
+                self._lastCheckId.write((tokenid, receiver), endchecksid);
                 i += 1;
             };
 
-        }
-
-        func unite(
-            ref self: ContractState,
-            public_key: felt252,
-            issuer: felt252,
-            receiver: ContractAddress,
-            tid: Array<felt252>,
-            checksid: Array<felt252>,
-            amt: Array<felt252>,
-            r: Array<felt252>,
-            s: Array<felt252>,
-        ) {
-            let mut i: usize = 0;
-
-            let _tid = tid.clone();
-            let _checksid = checksid.clone();
-            let _amt = amt.clone();
-            let _r = r.clone();
-            let _s = s.clone();
-            loop {
-                if i >= tid.len() {
-                    break;
-                }
-
-                assert(self._verifySign(public_key, issuer, receiver, *_tid.at(i), *_checksid.at(i), *_amt.at(i), *_r.at(i), *_s.at(i)) == starknet::VALIDATED, 'valid failed');
-
-                let tokenid = u256_from_felt252(*_tid.at(i));
-                let thischecksid = u256_from_felt252(*_checksid.at(i));
-                let amount = u256_from_felt252(*_amt.at(i));
-                self._mint(receiver, tokenid, amount, ArrayTrait::new().span());
-                self._lastCheckId.write((tokenid, receiver), thischecksid);
-                i += 1;
-            };
         }
 
     }
@@ -321,16 +292,17 @@ mod erc_1155 {
             issuer: felt252,
             receiver: ContractAddress,
             tid: felt252,
-            checksid: felt252,
+            starkid: felt252,
+            endid: felt252,
             amt: felt252,
             r: felt252,
             s: felt252
         ) -> felt252 {
             let tokenid = u256_from_felt252(tid);
-            let thischecksid = u256_from_felt252(checksid);
+            let thischecksid = u256_from_felt252(starkid);
             let lastId = self._lastCheckId.read((tokenid, receiver));
             assert(lastId + 1 == thischecksid, 'CHECKS ID NOT VALID');
-            let message_hash = pedersen(pedersen(pedersen(pedersen(issuer, contract_address_to_felt252(receiver)), tid), checksid), amt);
+            let message_hash = pedersen(pedersen(pedersen(pedersen(pedersen(issuer, contract_address_to_felt252(receiver)), tid), starkid), endid), amt);
             assert(
                 check_ecdsa_signature(
                     message_hash: message_hash,
