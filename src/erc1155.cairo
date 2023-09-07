@@ -3,12 +3,14 @@ use starknet::ContractAddress;
 
 #[starknet::interface]
 trait IERC1155<TContractState> {
+    fn owner_of(self: @TContractState) -> ContractAddress;
     fn balance_of(self: @TContractState, account: ContractAddress, id: u256) -> u256;
     fn balance_of_synthesis(self: @TContractState, account: ContractAddress, id: u256) -> Array<u256>;
+    fn account_balances_of(self: @TContractState, account: ContractAddress, ids: Array<u256>) -> Array<u256>;
     fn balance_of_batch(self: @TContractState, accounts: Array<ContractAddress>, ids: Array<u256>) -> Array<u256>;
     fn is_approved_for_all(self: @TContractState, account: ContractAddress, operator: ContractAddress) -> bool;
     fn last_checks(self: @TContractState, account: ContractAddress, tid: u256) -> u256;
-    fn synthesis_map(self: @TContractState, tid: u256, number: u256) -> u256;
+    fn synthesis_map(self: @TContractState, fromTid: u256, toTid: u256) -> u256;
 
     fn set_approval_for_all(ref self: TContractState, operator: ContractAddress, approved: bool);
     // Span<felt252> here is for bytes in Solidity
@@ -27,6 +29,20 @@ trait IERC1155<TContractState> {
         ids: Array<u256>,
         amounts: Array<u256>,
         data: Span<felt252>
+    );
+    fn set_synthesisMap(
+        ref self: TContractState,
+        fromTid: u256,
+        toTid: u256,
+        uniteNum: u256
+    );
+    fn set_uri(
+        ref self: TContractState,
+        uri: felt252
+    );
+    fn set_owner(
+        ref self: TContractState,
+        owner: ContractAddress
     );
     fn validate_sign(
         ref self: TContractState,
@@ -72,7 +88,7 @@ trait IERC1155<TContractState> {
         r: felt252,
         s: felt252,
         fromTid: u256,
-        uniteNum: u256,
+        toTid: u256,
         number: u256,
     );
 
@@ -88,20 +104,21 @@ trait IERC1155<TContractState> {
         r: Array<felt252>,
         s: Array<felt252>,
         fromTid: u256,
-        uniteNum: u256,
+        toTid: u256,
         number: u256,
     );
 
     fn synthesis(
         ref self: TContractState,
         fromTid: u256,
-        uniteNum: u256,
+        toTid: u256,
         number: u256,
     );
 }
 
 #[starknet::contract]
 mod erc_1155 {
+    use option::OptionTrait;
     use clone::Clone;
     use array::SpanTrait;
     use array::ArrayTrait;
@@ -115,12 +132,14 @@ mod erc_1155 {
     use ecdsa::check_ecdsa_signature;
     use integer::u256_from_felt252;
     use integer::U64IntoU256;
+    use integer::U256TryIntoU64;
 
     use super::super::erc1155_receiver::ERC1155Receiver;
     use super::super::erc1155_receiver::ERC1155ReceiverTrait;
     
     #[storage]
     struct Storage {
+        _owner: ContractAddress,
         _uri: felt252,
         _balances: LegacyMap::<(u256, ContractAddress), u256>,
         _operator_approvals: LegacyMap::<(ContractAddress, ContractAddress), bool>,
@@ -128,6 +147,7 @@ mod erc_1155 {
         _synthesisMap: LegacyMap::<(u256, u256), u256>,
         _synthesisStartNumber: LegacyMap::<(u256, ContractAddress), u256>,
         _synthesisStartTime:LegacyMap::<(u256, ContractAddress), u64>,
+        _synthesisEndTime:LegacyMap::<ContractAddress, u64>,
         _synthesisInterval: u64,
     }
 
@@ -182,20 +202,47 @@ mod erc_1155 {
     #[constructor]
     fn constructor(
         ref self: ContractState,
+        owner: ContractAddress,
         uri_: felt252
     ) {
         self._set_uri(uri_);
+        self._set_owner(owner);
         self._set_synthesisInterval(120);
-        self._set_synthesisMap(31, 10, 101);
-        self._set_synthesisMap(32, 10, 102);
-        self._set_synthesisMap(33, 10, 103);
-        self._set_synthesisMap(34, 10, 104);
-        self._set_synthesisMap(35, 10, 105);
-        self._set_synthesisMap(36, 10, 106);
+        self._set_synthesisMap(31, 101, 1352);
+        self._set_synthesisMap(31, 102, 1352);
+        self._set_synthesisMap(31, 103, 968);
+        self._set_synthesisMap(31, 104, 160);
+        self._set_synthesisMap(31, 105, 156);
+        self._set_synthesisMap(31, 106, 296);
+        self._set_synthesisMap(31, 107, 296);
+
+        self._set_synthesisMap(32, 201, 1352);
+        self._set_synthesisMap(32, 202, 1352);
+        self._set_synthesisMap(32, 203, 968);
+        self._set_synthesisMap(32, 204, 160);
+        self._set_synthesisMap(32, 205, 156);
+        self._set_synthesisMap(32, 206, 296);
+        self._set_synthesisMap(32, 207, 296);
+
+        self._set_synthesisMap(33, 301, 1352);
+        self._set_synthesisMap(33, 302, 1352);
+        self._set_synthesisMap(33, 303, 36);
+        self._set_synthesisMap(33, 304, 32);
+        self._set_synthesisMap(33, 305, 520);
+        self._set_synthesisMap(33, 306, 296);
+
+        self._set_synthesisMap(34, 401, 1352);
+        self._set_synthesisMap(35, 501, 296);
+        self._set_synthesisMap(36, 601, 512);
     }
 
     #[external(v0)]
     impl IERC1155impl of super::IERC1155<ContractState> {
+        fn owner_of(self: @ContractState) -> ContractAddress {
+            let owner = self._owner.read();
+            owner
+        }
+
         fn balance_of(self: @ContractState, account: ContractAddress, id: u256) -> u256 {
             assert(!account.is_zero(), 'query for the zero address');
             let balancesNumber = self._balances.read((id, account));
@@ -233,6 +280,22 @@ mod erc_1155 {
             synthesis_data
         }
 
+        fn account_balances_of(self: @ContractState, account: ContractAddress, ids: Array<u256>) -> Array<u256> {
+            assert(!account.is_zero(), 'query for the zero address');
+            let mut batch_balances = ArrayTrait::new();
+
+            let mut i: usize = 0;
+            loop {
+                if i >= ids.len() {
+                    break;
+                }
+                batch_balances.append(IERC1155impl::balance_of(self, account, *ids.at(i)));
+                i += 1;
+            };
+
+            batch_balances
+        }
+
         fn balance_of_batch(self: @ContractState, accounts: Array<ContractAddress>, ids: Array<u256>) -> Array<u256> {
             assert(accounts.len() == ids.len(), 'accounts and ids len mismatch');
             let mut batch_balances = ArrayTrait::new();
@@ -248,6 +311,7 @@ mod erc_1155 {
 
             batch_balances
         }
+
         fn is_approved_for_all(self: @ContractState, account: ContractAddress, operator: ContractAddress) -> bool {
             self._operator_approvals.read((account, operator))
         }
@@ -255,8 +319,8 @@ mod erc_1155 {
             assert(!account.is_zero(), 'query for the zero address');
             self._lastCheckId.read((tid, account))
         }
-        fn synthesis_map(self: @ContractState, tid: u256, number: u256) -> u256 {
-            self._synthesisMap.read((tid, number))
+        fn synthesis_map(self: @ContractState, fromTid: u256, toTid: u256) -> u256 {
+            self._synthesisMap.read((fromTid, toTid))
         }
 
         fn set_approval_for_all(ref self: ContractState, operator: ContractAddress, approved: bool) {
@@ -286,6 +350,24 @@ mod erc_1155 {
                 (from == get_caller_address()) | (IERC1155impl::is_approved_for_all(@self, from, get_caller_address())), 
                 'caller is not owner | approved');
             self._safe_batch_transfer_from(from, to, ids, amounts, data);
+        }
+
+        fn set_synthesisMap(ref self: ContractState, fromTid: u256, toTid: u256, uniteNum: u256) {
+            let owner = self._owner.read();
+            assert(owner == get_caller_address(), 'not owner');
+            self._set_synthesisMap(fromTid, toTid, uniteNum);
+        }
+
+        fn set_uri(ref self: ContractState, uri: felt252) {
+            let owner = self._owner.read();
+            assert(owner == get_caller_address(), 'not owner');
+            self._set_uri(uri);
+        }
+
+        fn set_owner(ref self: ContractState, owner: ContractAddress) {
+            let owner = self._owner.read();
+            assert(owner == get_caller_address(), 'not owner');
+            self._set_owner(owner);
         }
 
         fn validate_sign(
@@ -371,14 +453,10 @@ mod erc_1155 {
             r: felt252,
             s: felt252,
             fromTid: u256,
-            uniteNum: u256,
+            toTid: u256,
             number: u256,
         ) {
-            self._verify_synthesis (
-                fromTid,
-                uniteNum,
-                number,
-            );
+            let uniteNum = self._verify_synthesis(fromTid, toTid);
             
             self._mint_from_checks(
                 public_key,
@@ -392,7 +470,7 @@ mod erc_1155 {
                 s,
             );
 
-            self._synthesis(fromTid, uniteNum, number);
+            self._synthesis(fromTid, uniteNum, number, toTid);
         }
 
         fn synthesis_with_checks(
@@ -407,15 +485,11 @@ mod erc_1155 {
             r: Array<felt252>,
             s: Array<felt252>,
             fromTid: u256,
-            uniteNum: u256,
+            toTid: u256,
             number: u256,
         ) {
-            self._verify_synthesis (
-                fromTid,
-                uniteNum,
-                number,
-            );
-            
+            let uniteNum = self._verify_synthesis(fromTid, toTid);
+
             self._mul_mint_from_checks(
                 public_key,
                 issuer,
@@ -428,22 +502,18 @@ mod erc_1155 {
                 s,
             );
 
-            self._synthesis(fromTid, uniteNum, number);
+            self._synthesis(fromTid, uniteNum, number, toTid);
         }
 
         fn synthesis(
             ref self: ContractState,
             fromTid: u256,
-            uniteNum: u256,
+            toTid: u256,
             number: u256,
         ) {
-            self._verify_synthesis (
-                fromTid,
-                uniteNum,
-                number,
-            );
+            let uniteNum = self._verify_synthesis(fromTid, toTid);
 
-            self._synthesis(fromTid, uniteNum, number);
+            self._synthesis(fromTid, uniteNum, number, toTid);
         }
 
     }
@@ -731,17 +801,23 @@ mod erc_1155 {
             self._uri.write(newuri);
         }
 
+        fn _set_owner(ref self: ContractState, owner: ContractAddress) {
+            self._owner.write(owner);
+        }
+
         fn _set_synthesisInterval(ref self: ContractState, diff: u64) {
             self._synthesisInterval.write(diff);
         }
 
-        fn _set_synthesisMap(ref self: ContractState, tid: u256, num: u256, newTid: u256) {
-            self._synthesisMap.write((tid, num), newTid);
+        fn _set_synthesisMap(ref self: ContractState, tid: u256, newTid: u256, uniteNum: u256) {
+            self._synthesisMap.write((tid, newTid), uniteNum);
         }
 
         fn _set_synthesisStart(ref self: ContractState, tid: u256, address: ContractAddress, num: u256) {
             self._synthesisStartTime.write((tid, address), get_block_timestamp());
             self._synthesisStartNumber.write((tid, address), num);
+            let num64: u64 = U256TryIntoU64::try_into(num).unwrap();
+            self._synthesisEndTime.write(address, get_block_timestamp() + (self._synthesisInterval.read() * num64));
         }
 
         fn _set_approval_for_All(
@@ -858,10 +934,8 @@ mod erc_1155 {
             fromTid: u256,
             uniteNum: u256,
             number: u256,
+            toTid: u256,
         ) {
-            let toTid = self._synthesisMap.read((fromTid, uniteNum));
-            assert(toTid > 0, 'data error');
-
             let newNum = self._balances.read((fromTid, get_caller_address()));
             assert(newNum >= uniteNum * number, 'balance not enough');
             self._mint(get_caller_address(), toTid, number, ArrayTrait::new().span());
@@ -872,18 +946,14 @@ mod erc_1155 {
         fn _verify_synthesis (
             ref self: ContractState,
             fromTid: u256,
-            uniteNum: u256,
-            number: u256,
-        ) {
-            let toTid = self._synthesisMap.read((fromTid, uniteNum));
-            assert(toTid > 0, 'data error');
+            toTid: u256,
+        ) -> u256 {
+            let uniteNum = self._synthesisMap.read((fromTid, toTid));
+            assert(uniteNum > 0, 'data error');
 
-            let synthesisNumber = self._synthesisStartNumber.read((fromTid, get_caller_address()));
-            if synthesisNumber > 0 {
-                let synthesisTime = self._synthesisStartTime.read((fromTid, get_caller_address()));
-                let timeIntevalNumber = U64IntoU256::into((get_block_timestamp() - synthesisTime) / self._synthesisInterval.read());
-                assert(timeIntevalNumber > synthesisNumber, 'still synthesis')
-            }
+            let synthesisEndTime = self._synthesisEndTime.read(get_caller_address());
+            assert(synthesisEndTime < get_block_timestamp(), 'still synthesis');
+            uniteNum
         }
 
     }
