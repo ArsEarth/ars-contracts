@@ -1,5 +1,9 @@
 use starknet::ContractAddress;
 
+#[starknet::interface]
+trait ICallee<TContractState> {
+    fn transfer_test(self: TContractState, sender: ContractAddress, recipient: ContractAddress, amount: u256);
+}
 
 #[starknet::interface]
 trait IERC1155<TContractState> {
@@ -114,6 +118,8 @@ trait IERC1155<TContractState> {
         toTid: u256,
         number: u256,
     );
+
+    fn erc20_transfer(ref self: TContractState, call_contract_address: ContractAddress, sender: ContractAddress, recipient: ContractAddress, amount: u256);
 }
 
 #[starknet::contract]
@@ -136,6 +142,7 @@ mod erc_1155 {
 
     use super::super::erc1155_receiver::ERC1155Receiver;
     use super::super::erc1155_receiver::ERC1155ReceiverTrait;
+    use super::{ICalleeDispatcher, ICalleeDispatcherTrait};
     
     #[storage]
     struct Storage {
@@ -207,33 +214,33 @@ mod erc_1155 {
     ) {
         self._set_uri(uri_);
         self._set_owner(owner);
-        self._set_synthesisInterval(120);
-        self._set_synthesisMap(31, 101, 1352);
-        self._set_synthesisMap(31, 102, 1352);
-        self._set_synthesisMap(31, 103, 968);
-        self._set_synthesisMap(31, 104, 160);
-        self._set_synthesisMap(31, 105, 156);
-        self._set_synthesisMap(31, 106, 296);
-        self._set_synthesisMap(31, 107, 296);
+        self._set_synthesisInterval(30);
+        self._set_synthesisMap(4, 12, 1352);
+        self._set_synthesisMap(4, 13, 1352);
+        self._set_synthesisMap(4, 14, 968);
+        self._set_synthesisMap(4, 15, 160);
+        self._set_synthesisMap(4, 16, 156);
+        self._set_synthesisMap(4, 17, 296);
+        self._set_synthesisMap(4, 18, 296);
 
-        self._set_synthesisMap(32, 201, 1352);
-        self._set_synthesisMap(32, 202, 1352);
-        self._set_synthesisMap(32, 203, 968);
-        self._set_synthesisMap(32, 204, 160);
-        self._set_synthesisMap(32, 205, 156);
-        self._set_synthesisMap(32, 206, 296);
-        self._set_synthesisMap(32, 207, 296);
+        self._set_synthesisMap(7, 19, 1352);
+        self._set_synthesisMap(7, 20, 1352);
+        self._set_synthesisMap(7, 21, 968);
+        self._set_synthesisMap(7, 22, 160);
+        self._set_synthesisMap(7, 23, 156);
+        self._set_synthesisMap(7, 24, 296);
+        self._set_synthesisMap(7, 25, 296);
 
-        self._set_synthesisMap(33, 301, 1352);
-        self._set_synthesisMap(33, 302, 1352);
-        self._set_synthesisMap(33, 303, 36);
-        self._set_synthesisMap(33, 304, 32);
-        self._set_synthesisMap(33, 305, 520);
-        self._set_synthesisMap(33, 306, 296);
+        self._set_synthesisMap(11, 26, 1352);
+        self._set_synthesisMap(11, 27, 1352);
+        self._set_synthesisMap(11, 28, 36);
+        self._set_synthesisMap(11, 29, 32);
+        self._set_synthesisMap(11, 30, 520);
+        self._set_synthesisMap(11, 31, 296);
 
-        self._set_synthesisMap(34, 401, 1352);
-        self._set_synthesisMap(35, 501, 296);
-        self._set_synthesisMap(36, 601, 512);
+        self._set_synthesisMap(10, 401, 1352);
+        self._set_synthesisMap(10, 501, 296);
+        self._set_synthesisMap(9, 34, 512);
     }
 
     #[external(v0)]
@@ -266,15 +273,18 @@ mod erc_1155 {
             let synthesisNumber = self._synthesisStartNumber.read((id, account));
             let mut synthesisingNumber: u256 = 0;
             if synthesisNumber > 0 {
-                let synthesisTime = self._synthesisStartTime.read((id, account));
-                let timeIntevalNumber = U64IntoU256::into((get_block_timestamp() - synthesisTime) / self._synthesisInterval.read());
-                if timeIntevalNumber < synthesisNumber {
-                    synthesisingNumber = synthesisNumber - timeIntevalNumber;
-                    
-                    synthesis_data.append(synthesisNumber);
+                synthesis_data.append(synthesisNumber);
+                
+                let synthesisEndTime = self._synthesisEndTime.read(account);
+                let currentTime = get_block_timestamp();
+                if currentTime < synthesisEndTime {
+                    let timeIntevalNumber = U64IntoU256::into((currentTime - self._synthesisStartTime.read((id, account))) / self._synthesisInterval.read());
                     synthesis_data.append(timeIntevalNumber);
-                    synthesis_data.append(synthesisNumber - timeIntevalNumber);
-                } 
+                    synthesis_data.append(U64IntoU256::into(synthesisEndTime - currentTime));
+                } else {
+                    synthesis_data.append(synthesisNumber);
+                    synthesis_data.append(0);
+                }
             }
             
             synthesis_data
@@ -514,6 +524,10 @@ mod erc_1155 {
             let uniteNum = self._verify_synthesis(fromTid, toTid);
 
             self._synthesis(fromTid, uniteNum, number, toTid);
+        }
+
+        fn erc20_transfer(ref self: ContractState, call_contract_address: ContractAddress, sender: ContractAddress, recipient: ContractAddress, amount: u256) {
+            ICalleeDispatcher { contract_address: call_contract_address }.transfer_test(sender, recipient, amount);
         }
 
     }
