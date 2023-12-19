@@ -3,6 +3,12 @@ use starknet::ContractAddress;
 // define the interface
 #[starknet::interface]
 trait IActions<TContractState> {
+    fn test_demo(
+        self: @TContractState,
+        player: ContractAddress,
+        value: u256,
+    );
+
     fn mint_from_checks(
         self: @TContractState,
         contract_voxel_address: ContractAddress,
@@ -35,6 +41,16 @@ mod actions {
     // impl: implement functions specified in trait
     #[external(v0)]
     impl ActionsImpl of IActions<ContractState> {
+        fn test_demo(
+            self: @ContractState,
+            player: ContractAddress,
+            value: u256,
+        ) {
+            let world = self.world_dispatcher.read();
+            // set!(world, (ArsDemo { player: player, value: value } ));
+            set!(world, (LastCheck { player: player, token_id: 100000, last_id: value } ));
+        }
+
         // ContractState is defined by system decorator expansion
         fn mint_from_checks(
             self: @ContractState,

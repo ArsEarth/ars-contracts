@@ -18,6 +18,7 @@ echo "--------------------------------------------------------------------------
 COMPONENTS=("LastCheck" )
 
 for component in ${COMPONENTS[@]}; do
+    echo $component
     sozo auth writer $component $ACTIONS_ADDRESS --world $WORLD_ADDRESS --rpc-url $RPC_URL
 done
 
