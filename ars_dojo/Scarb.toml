@@ -19,7 +19,7 @@ rpc_url = "http://localhost:5050/"
 # Default account for katana with seed = 0
 account_address = "0x517ececd29116499f4a1b64b094da79ba08dfd54a3edaa316134c41f8160973"
 private_key = "0x1800000000300000180000000000030000000000003006001800006600"
-# world = "0x34743846353bd2e12d05f5560e1a7b97a0757b3112a5004f1df89bca5e1fea6"
+world = "0x34743846353bd2e12d05f5560e1a7b97a0757b3112a5004f1df89bca5e1fea6"
 
 # rpc_url = "https://starknet-madara.reddio.com"
 # Default account for katana with seed = 0

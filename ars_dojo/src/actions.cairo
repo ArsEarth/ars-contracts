@@ -1,5 +1,33 @@
 use starknet::ContractAddress;
 
+#[starknet::interface]
+trait ICalleeVoxel1155<TContractState> {
+    fn mint(
+        ref self: TContractState,
+        to: ContractAddress,
+        id: u256,
+        amount: u256,
+    );
+
+    fn burn_batch(
+        ref self: TContractState,
+        from: ContractAddress,
+        ids: Array<u256>,
+        amounts: Array<u256>
+    );
+}
+
+#[starknet::interface]
+trait ICalleeCore1155<TContractState> {
+    fn mint(
+        ref self: TContractState,
+        to: ContractAddress,
+        id: u256,
+        amount: u256,
+    );
+}
+
+
 // define the interface
 #[starknet::interface]
 trait IActions<TContractState> {
@@ -35,8 +63,8 @@ mod actions {
     use dojo_ars::models::{LastCheck};
     use dojo_ars::utils::verifySign;
     use super::IActions;
-    use dojo_ars::models::{ICalleeVoxel1155Dispatcher, ICalleeVoxel1155DispatcherTrait};
-    use dojo_ars::models::{ICalleeCore1155Dispatcher, ICalleeCore1155DispatcherTrait};
+    use super::{ICalleeVoxel1155Dispatcher, ICalleeVoxel1155DispatcherTrait};
+    use super::{ICalleeCore1155Dispatcher, ICalleeCore1155DispatcherTrait};
 
     // impl: implement functions specified in trait
     #[external(v0)]
