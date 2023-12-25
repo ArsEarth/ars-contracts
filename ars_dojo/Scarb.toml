@@ -1,13 +1,13 @@
 [package]
-cairo-version = "2.3.0"
+cairo-version = "2.4.0"
 name = "dojo_ars"
-version = "0.3.15"
+version = "0.4.0"
 
 [cairo]
 sierra-replace-ids = true
 
 [dependencies]
-dojo = { git = "https://github.com/dojoengine/dojo", version = "0.3.15" }
+dojo = { git = "https://github.com/dojoengine/dojo", version = "0.4.1" }
 
 [[target.dojo]]
 
@@ -19,15 +19,4 @@ rpc_url = "http://localhost:5050/"
 # Default account for katana with seed = 0
 account_address = "0x517ececd29116499f4a1b64b094da79ba08dfd54a3edaa316134c41f8160973"
 private_key = "0x1800000000300000180000000000030000000000003006001800006600"
-world = "0x34743846353bd2e12d05f5560e1a7b97a0757b3112a5004f1df89bca5e1fea6"
-
-# rpc_url = "https://starknet-madara.reddio.com"
-# Default account for katana with seed = 0
-# account_address = "0x26bc5b213aacf39a3f7bc71a7f22e8e4c7439a0b220466ce2ac5387c07e2d3"
-# private_key = "0x050953649BfFC4878db6CfBe46E52f89812eD7Cdcf0B1A3dDed3BFBA859BB687"
-
-# GOERLI
-# rpc_url = "https://starknet-goerli.g.alchemy.com/v2/xB1wDJKUrPp5nTkc9MMPT3Z9KgVu1gpr"
-# account_address = "0x4ae12abee1c09072158b1cba3fc2cd53ec4105d546be21acea681a24869680"
-# private_key = "0xee89371c7ff55b162347d12df38e242dabff6f8f3e33d601dcaef9b69e4647"
-# world = "0x15b11b1a34d6cacf3dc3c8c419a6407c5365cdb80ab1f06389efed2f3e1c399"
+world = "0x33ac2f528bb97cc7b79148fd1756dc368be0e95d391d8c6d6473ecb60b4560e"

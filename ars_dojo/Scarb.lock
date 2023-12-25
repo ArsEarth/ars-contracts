@@ -3,15 +3,15 @@ version = 1
 
 [[package]]
 name = "dojo"
-version = "0.3.15"
-source = "git+https://github.com/dojoengine/dojo#48d04d1ecb5e97567d4dfa70f018efa94802a45f"
+version = "0.4.1"
+source = "git+https://github.com/dojoengine/dojo#3de37a62cfbd81063bd5eb1ad39f028b2d482049"
 dependencies = [
  "dojo_plugin",
 ]
 
 [[package]]
 name = "dojo_ars"
-version = "0.3.15"
+version = "0.4.0"
 dependencies = [
  "dojo",
 ]

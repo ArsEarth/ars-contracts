@@ -21,6 +21,17 @@ impl AdminTraitImpl of AdminTrait {
 }
 
 #[derive(Model, Drop, Serde)]
+struct VoxelId {
+    #[key]
+    config_id: u8,
+    base_voxel_id: u256,
+    r_voxel_id: u256,
+    g_voxel_id: u256,
+    b_voxel_id: u256,
+    balck_voxel_id: u256,
+}
+
+#[derive(Model, Drop, Serde)]
 struct ResourcesCost {
     #[key]
     tokenid: felt252,
@@ -31,10 +42,9 @@ struct ResourcesCost {
     black_num: u256,
 }
 
-
 #[starknet::interface]
 trait ISetupWorld<ContractState> {
-    fn execute(
+    fn set_voxel_num(
         ref self: ContractState,
         tokenid: felt252,
         block_num: u256,
@@ -43,6 +53,14 @@ trait ISetupWorld<ContractState> {
         b_num: u256,
         black_num: u256,
     );
+    fn set_voxel_id(
+        ref self: ContractState,
+        base_voxel_id: u256,
+        r_voxel_id: u256,
+        g_voxel_id: u256,
+        b_voxel_id: u256,
+        balck_voxel_id: u256,
+    );
 }
 
 
@@ -50,30 +68,66 @@ trait ISetupWorld<ContractState> {
 mod setup_world {
     use starknet::ContractAddress;
     use starknet::get_caller_address;
-    use super::{ResourcesCost, AdminTrait};
+    use super::{ResourcesCost, VoxelId, AdminTrait};
 
     #[external(v0)]
-    fn execute(
+    fn set_voxel_num(
         ref self: ContractState,
-        tokenid: felt252,
-        block_num: u256,
-        r_num: u256,
-        g_num: u256,
-        b_num: u256,
-        black_num: u256,
+        tokenid: Array<felt252>,
+        block_num: Array<u256>,
+        r_num: Array<u256>,
+        g_num: Array<u256>,
+        b_num: Array<u256>,
+        black_num: Array<u256>,
     ) {
         let world = self.world_dispatcher.read();
         world.only_admins(@get_caller_address());
+        assert(tokenid.len() == block_num.len(), 'data error');
+
+        let mut i: usize = 0;
+        loop {
+            if i == tokenid.len() {
+                break;
+            }
+            
+            set!(
+                world,
+                (ResourcesCost {
+                    tokenid: *tokenid.at(i),
+                    block_num: *block_num.at(i),
+                    r_num: *r_num.at(i),
+                    g_num: *g_num.at(i),
+                    b_num: *b_num.at(i),
+                    black_num: *black_num.at(i),
+                })
+            );
+            i += 1;
+        };
+        return ();
+    }
+
+    #[external(v0)]
+    fn set_voxel_id(
+        ref self: ContractState,
+        base_voxel_id: u256,
+        r_voxel_id: u256,
+        g_voxel_id: u256,
+        b_voxel_id: u256,
+        balck_voxel_id: u256,
+    ) {
+        let world = self.world_dispatcher.read();
+        world.only_admins(@get_caller_address());
+        let config_id: u8 = 1;
 
         set!(
             world,
-            (ResourcesCost {
-                tokenid,
-                block_num,
-                r_num,
-                g_num,
-                b_num,
-                black_num,
+            (VoxelId {
+                config_id,
+                base_voxel_id,
+                r_voxel_id,
+                g_voxel_id,
+                b_voxel_id,
+                balck_voxel_id,
             })
         );
         return ();
