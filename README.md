@@ -1,4 +1,7 @@
 # Ars.Earth
+
+**This repository includes the Cairo and Dojo code for the Ars.Earth contracts.**
+
 Ars.Earth is the Augmented World where Augmented Reality(AR) meets Blockchain. 
 
 In this new version, we aim to support the Briq Protocol. That means stuffs you build using Briq can now be turned into blueprints in the Ars World. Players can use these blueprints to construct creations and show them off in the real world. We demonstrated this gameplay with the Ducks Everywhere NFT Collection as an example. 
