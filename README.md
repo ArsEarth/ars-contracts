@@ -1,21 +1,31 @@
+# Ars.Earth
+Ars.Earth is the Augmented World where Augmented Reality(AR) meets Blockchain. 
+
+In this new version, we aim to support the Briq Protocol. That means stuffs you build using Briq can now be turned into blueprints in the Ars World. Players can use these blueprints to construct creations and show them off in the real world. We demonstrated this gameplay with the Ducks Everywhere NFT Collection as an example. 
+
+In Ars World, everything is made with Voxels and Pigments. To get these materials, you gonna step into the real world to collect them. Then, enter the Blueprint Store in the game, build whatever you like, and show it off in the real world.
+
+We're cooking up some fun ways for you to play around with these items in future updates, like maybe taking a shot at them!
+
+
 ## Directory Explanation
 - ars_dojo  
-  Ars's Dojo World
+  Ars' Dojo World
 - asset  
   Contracts related to assets, temporarily independent of the dojo.  
   - build721  
-  The blueprint contract obtained after setup, adheres to ERC721 rules.
+  The blueprint contract obtained after build, adheres to ERC721 rules.
   - voxel1155  
-  The asset contract for collected voxels complies with ERC1155.
+  The asset contract for collecting voxels, adheres to ERC1155 rules.
   - core1155  
-  The core asset contract collected, following ERC1155, temporarily unused assets.
-## Contract Compilation
-- ars_dojo
+  The core asset contract collected, adheres to ERC1155 rules, which is not used for now.
+## Complie Contracts
+- Ars_dojo
   ```
   sozo build
   sozo migrate
   ```
-- asset
+- Asset
   ```
   cd asset
   
@@ -38,7 +48,7 @@
   starkli deploy 0x064c532fbde75b0efcb690b3d59ead43dc98b5dea100afdff37d916b03d18b87 0x5c47b38f788ec9d382b5079165bc96c0f49647250199a78d34c436d54d12217 0x0 --rpc http://127.0.0.1:5050/ --account *** --keystore *** --keystore-password ***
   ```
 ## Pre-World Initialization Configuration
-- Set up whitelist  
+- Setup whitelist  
   Add the actions contract from dojo to the whitelists of build721, voxel1155, and core1155.
 - Authorization in Dojo  
   ```
@@ -46,4 +56,14 @@
   bash scripts/default_auth.sh
   ```
 - Initialize Configuration in the Dojo World  
-  Request the set_voxel_id and set_voxel_num functions from the world_config contract in the Dojo, setting the Voxel ID and quantity of the consumed resources."
+  Request the set_voxel_id and set_voxel_num functions from the world_config contract in the Dojo, setting the Voxel ID and quantity of the consumed resources.
+
+## Have try
+IOS: https://testflight.apple.com/join/smDJLIHx
+Android: https://drive.google.com/drive/folders/1oi8DtYikHiCDYonJnXAOW-r7PAfdoEJX
+
+## Key Links
+Website: https://ars.earth/ 
+Codex: https://codex.ars.earth/
+Twitter: https://twitter.com/Ars_Earth
+Discord: https://discord.gg/CzrmueueNt
