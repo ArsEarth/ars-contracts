@@ -60,10 +60,14 @@ We're cooking up some fun ways for you to play around with these items in future
 
 ## Have try
 IOS: https://testflight.apple.com/join/smDJLIHx
+
 Android: https://drive.google.com/drive/folders/1oi8DtYikHiCDYonJnXAOW-r7PAfdoEJX
 
 ## Key Links
 Website: https://ars.earth/ 
+
 Codex: https://codex.ars.earth/
+
 Twitter: https://twitter.com/Ars_Earth
+
 Discord: https://discord.gg/CzrmueueNt
