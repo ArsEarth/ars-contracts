@@ -32,6 +32,17 @@ struct VoxelId {
 }
 
 #[derive(Model, Drop, Serde)]
+struct VoxelIdV1 {
+    #[key]
+    config_id: u8,
+    base_voxel_id: felt252,
+    r_voxel_id: felt252,
+    g_voxel_id: felt252,
+    b_voxel_id: felt252,
+    balck_voxel_id: felt252,
+}
+
+#[derive(Model, Drop, Serde)]
 struct ResourcesCost {
     #[key]
     tokenid: felt252,
@@ -40,6 +51,14 @@ struct ResourcesCost {
     g_num: u256,
     b_num: u256,
     black_num: u256,
+}
+
+#[derive(Model, Drop, Serde)]
+struct AssetContract {
+    #[key]
+    contract_key: felt252,
+    contract_type: felt252,
+    contract_address: ContractAddress,
 }
 
 #[starknet::interface]
@@ -61,6 +80,19 @@ trait ISetupWorld<ContractState> {
         b_voxel_id: u256,
         balck_voxel_id: u256,
     );
+    fn set_voxel_id_v1(
+        ref self: ContractState,
+        base_voxel_id: felt252,
+        r_voxel_id: felt252,
+        g_voxel_id: felt252,
+        b_voxel_id: felt252,
+        balck_voxel_id: felt252,
+    );
+    fn set_asset_contract(
+        ref self: ContractState,
+        types: Array<felt252>,
+        address: Array<ContractAddress>,
+    );
 }
 
 
@@ -68,7 +100,7 @@ trait ISetupWorld<ContractState> {
 mod setup_world {
     use starknet::ContractAddress;
     use starknet::get_caller_address;
-    use super::{ResourcesCost, VoxelId, AdminTrait};
+    use super::{ResourcesCost, VoxelId, VoxelIdV1, AdminTrait, AssetContract};
 
     #[external(v0)]
     fn set_voxel_num(
@@ -130,6 +162,64 @@ mod setup_world {
                 balck_voxel_id,
             })
         );
+        return ();
+    }
+
+    #[external(v0)]
+    fn set_voxel_id_v1(
+        ref self: ContractState,
+        base_voxel_id: felt252,
+        r_voxel_id: felt252,
+        g_voxel_id: felt252,
+        b_voxel_id: felt252,
+        balck_voxel_id: felt252,
+    ) {
+        let world = self.world_dispatcher.read();
+        world.only_admins(@get_caller_address());
+        let config_id: u8 = 1;
+
+        set!(
+            world,
+            (VoxelIdV1 {
+                config_id,
+                base_voxel_id,
+                r_voxel_id,
+                g_voxel_id,
+                b_voxel_id,
+                balck_voxel_id,
+            })
+        );
+        return ();
+    }
+
+    #[external(v0)]
+    fn set_asset_contract(
+        ref self: ContractState,
+        keys: Array<felt252>,
+        types: Array<felt252>,
+        addresses: Array<ContractAddress>,
+    ) {
+        let world = self.world_dispatcher.read();
+        world.only_admins(@get_caller_address());
+        assert(keys.len() == types.len(), 'data error');
+        assert(types.len() == addresses.len(), 'data error');
+        
+        let mut i: usize = 0;
+        loop {
+            if i == types.len() {
+                break;
+            }
+            
+            set!(
+                world,
+                (AssetContract {
+                    contract_key: *keys.at(i),
+                    contract_type: *types.at(i),
+                    contract_address: *addresses.at(i),
+                })
+            );
+            i += 1;
+        };
         return ();
     }
 }
