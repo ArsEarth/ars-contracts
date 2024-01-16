@@ -1,7 +1,7 @@
 {
   "world": {
     "name": "dojo::world::world",
-    "address": null,
+    "address": "0x34743846353bd2e12d05f5560e1a7b97a0757b3112a5004f1df89bca5e1fea6",
     "class_hash": "0x5ac623f0c96059936bd2d0904bdd31799e430fe08a0caff7a5f497260b16497",
     "abi": [
       {
@@ -948,7 +948,7 @@
   "contracts": [
     {
       "name": "dojo_ars::actions::actions",
-      "address": null,
+      "address": "0x7d2c57fcec28bd280f5dadf4f8880135a15c7d20c3d99936d5bd58d7c2d4d44",
       "class_hash": "0xc0f792dc0a0e3a18f6a1093403b0c719de85c9cf7fef47d6aae055134e9730",
       "abi": [
         {
@@ -1325,7 +1325,7 @@
     },
     {
       "name": "dojo_ars::world_config::setup_world",
-      "address": null,
+      "address": "0x46c44c3f37044bef70b0745b43a59093f3faec7c403f7f55d0f85438b6e3f7",
       "class_hash": "0x54b78b7fd5661257d12dda15384e7f39e2128a353225de1460c7c59ccb70cef",
       "abi": [
         {
