@@ -949,7 +949,7 @@
     {
       "name": "dojo_ars::actions::actions",
       "address": "0x7d2c57fcec28bd280f5dadf4f8880135a15c7d20c3d99936d5bd58d7c2d4d44",
-      "class_hash": "0xc0f792dc0a0e3a18f6a1093403b0c719de85c9cf7fef47d6aae055134e9730",
+      "class_hash": "0x2157b33978048d837e167695e37b08cbb80ebc3dd58d980926914f14d2156c4",
       "abi": [
         {
           "type": "impl",
@@ -999,6 +999,38 @@
             {
               "name": "high",
               "type": "core::integer::u128"
+            }
+          ]
+        },
+        {
+          "type": "struct",
+          "name": "dojo_ars::utils::FTSpec",
+          "members": [
+            {
+              "name": "token_id",
+              "type": "core::felt252"
+            },
+            {
+              "name": "qty",
+              "type": "core::integer::u128"
+            }
+          ]
+        },
+        {
+          "type": "struct",
+          "name": "dojo_ars::utils::PackedShapeItem",
+          "members": [
+            {
+              "name": "color",
+              "type": "core::felt252"
+            },
+            {
+              "name": "material",
+              "type": "core::integer::u64"
+            },
+            {
+              "name": "x_y_z",
+              "type": "core::felt252"
             }
           ]
         },
@@ -1172,6 +1204,58 @@
             },
             {
               "type": "function",
+              "name": "mint_voxel_by_checks_v1",
+              "inputs": [
+                {
+                  "name": "public_key",
+                  "type": "core::felt252"
+                },
+                {
+                  "name": "issuer",
+                  "type": "core::felt252"
+                },
+                {
+                  "name": "receiver",
+                  "type": "core::starknet::contract_address::ContractAddress"
+                },
+                {
+                  "name": "tid",
+                  "type": "core::array::Array::<core::felt252>"
+                },
+                {
+                  "name": "startid",
+                  "type": "core::array::Array::<core::felt252>"
+                },
+                {
+                  "name": "endid",
+                  "type": "core::array::Array::<core::felt252>"
+                },
+                {
+                  "name": "amt",
+                  "type": "core::array::Array::<core::felt252>"
+                },
+                {
+                  "name": "t721id",
+                  "type": "core::array::Array::<core::felt252>"
+                },
+                {
+                  "name": "remove_block",
+                  "type": "core::array::Array::<core::felt252>"
+                },
+                {
+                  "name": "r",
+                  "type": "core::array::Array::<core::felt252>"
+                },
+                {
+                  "name": "s",
+                  "type": "core::array::Array::<core::felt252>"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
               "name": "mint_build_with_checks_v1",
               "inputs": [
                 {
@@ -1241,6 +1325,174 @@
                 {
                   "name": "from_contract",
                   "type": "core::starknet::contract_address::ContractAddress"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "mint_new_core_with_checks",
+              "inputs": [
+                {
+                  "name": "from_tid",
+                  "type": "core::integer::u256"
+                },
+                {
+                  "name": "amount",
+                  "type": "core::integer::u256"
+                },
+                {
+                  "name": "fts",
+                  "type": "core::array::Array::<dojo_ars::utils::FTSpec>"
+                },
+                {
+                  "name": "shape",
+                  "type": "core::array::Array::<dojo_ars::utils::PackedShapeItem>"
+                },
+                {
+                  "name": "public_key",
+                  "type": "core::felt252"
+                },
+                {
+                  "name": "issuer",
+                  "type": "core::felt252"
+                },
+                {
+                  "name": "receiver",
+                  "type": "core::starknet::contract_address::ContractAddress"
+                },
+                {
+                  "name": "tid",
+                  "type": "core::array::Array::<core::felt252>"
+                },
+                {
+                  "name": "startid",
+                  "type": "core::array::Array::<core::felt252>"
+                },
+                {
+                  "name": "endid",
+                  "type": "core::array::Array::<core::felt252>"
+                },
+                {
+                  "name": "amt",
+                  "type": "core::array::Array::<core::felt252>"
+                },
+                {
+                  "name": "t721id",
+                  "type": "core::array::Array::<core::felt252>"
+                },
+                {
+                  "name": "remove_block",
+                  "type": "core::array::Array::<core::felt252>"
+                },
+                {
+                  "name": "r",
+                  "type": "core::array::Array::<core::felt252>"
+                },
+                {
+                  "name": "s",
+                  "type": "core::array::Array::<core::felt252>"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "mint_new_core",
+              "inputs": [
+                {
+                  "name": "from_tid",
+                  "type": "core::integer::u256"
+                },
+                {
+                  "name": "amount",
+                  "type": "core::integer::u256"
+                },
+                {
+                  "name": "fts",
+                  "type": "core::array::Array::<dojo_ars::utils::FTSpec>"
+                },
+                {
+                  "name": "shape",
+                  "type": "core::array::Array::<dojo_ars::utils::PackedShapeItem>"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "rebuild_core_with_checks",
+              "inputs": [
+                {
+                  "name": "from_tid",
+                  "type": "core::integer::u256"
+                },
+                {
+                  "name": "amount",
+                  "type": "core::integer::u256"
+                },
+                {
+                  "name": "public_key",
+                  "type": "core::felt252"
+                },
+                {
+                  "name": "issuer",
+                  "type": "core::felt252"
+                },
+                {
+                  "name": "receiver",
+                  "type": "core::starknet::contract_address::ContractAddress"
+                },
+                {
+                  "name": "tid",
+                  "type": "core::array::Array::<core::felt252>"
+                },
+                {
+                  "name": "startid",
+                  "type": "core::array::Array::<core::felt252>"
+                },
+                {
+                  "name": "endid",
+                  "type": "core::array::Array::<core::felt252>"
+                },
+                {
+                  "name": "amt",
+                  "type": "core::array::Array::<core::felt252>"
+                },
+                {
+                  "name": "t721id",
+                  "type": "core::array::Array::<core::felt252>"
+                },
+                {
+                  "name": "remove_block",
+                  "type": "core::array::Array::<core::felt252>"
+                },
+                {
+                  "name": "r",
+                  "type": "core::array::Array::<core::felt252>"
+                },
+                {
+                  "name": "s",
+                  "type": "core::array::Array::<core::felt252>"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "rebuild_core",
+              "inputs": [
+                {
+                  "name": "from_tid",
+                  "type": "core::integer::u256"
+                },
+                {
+                  "name": "amount",
+                  "type": "core::integer::u256"
                 }
               ],
               "outputs": [],
@@ -1326,7 +1578,7 @@
     {
       "name": "dojo_ars::world_config::setup_world",
       "address": "0x46c44c3f37044bef70b0745b43a59093f3faec7c403f7f55d0f85438b6e3f7",
-      "class_hash": "0x54b78b7fd5661257d12dda15384e7f39e2128a353225de1460c7c59ccb70cef",
+      "class_hash": "0x32c5eb7f6ff2986e2fb4405ea7eb99d94250437afedc19e3d03691581448f0b",
       "abi": [
         {
           "type": "impl",
@@ -1474,23 +1726,23 @@
           "inputs": [
             {
               "name": "base_voxel_id",
-              "type": "core::felt252"
+              "type": "core::integer::u256"
             },
             {
               "name": "r_voxel_id",
-              "type": "core::felt252"
+              "type": "core::integer::u256"
             },
             {
               "name": "g_voxel_id",
-              "type": "core::felt252"
+              "type": "core::integer::u256"
             },
             {
               "name": "b_voxel_id",
-              "type": "core::felt252"
+              "type": "core::integer::u256"
             },
             {
               "name": "balck_voxel_id",
-              "type": "core::felt252"
+              "type": "core::integer::u256"
             }
           ],
           "outputs": [],
@@ -1502,7 +1754,7 @@
           "inputs": [
             {
               "name": "keys",
-              "type": "core::array::Array::<core::felt252>"
+              "type": "core::array::Array::<core::integer::u256>"
             },
             {
               "name": "types",
@@ -1746,7 +1998,7 @@
       "members": [
         {
           "name": "contract_key",
-          "type": "felt252",
+          "type": "u256",
           "key": true
         },
         {
@@ -1760,7 +2012,7 @@
           "key": false
         }
       ],
-      "class_hash": "0x3371f114e92cbb6f8d8b4c1ae0a876161dde50195319cf383ddce5a1e6f3ea",
+      "class_hash": "0x640896d124ed0f7b379729c3df1cb65a50a3520c0c65d1e9d3b9057a9c348fd",
       "abi": [
         {
           "type": "function",
@@ -2327,31 +2579,31 @@
         },
         {
           "name": "base_voxel_id",
-          "type": "felt252",
+          "type": "u256",
           "key": false
         },
         {
           "name": "r_voxel_id",
-          "type": "felt252",
+          "type": "u256",
           "key": false
         },
         {
           "name": "g_voxel_id",
-          "type": "felt252",
+          "type": "u256",
           "key": false
         },
         {
           "name": "b_voxel_id",
-          "type": "felt252",
+          "type": "u256",
           "key": false
         },
         {
           "name": "balck_voxel_id",
-          "type": "felt252",
+          "type": "u256",
           "key": false
         }
       ],
-      "class_hash": "0x6d0f16259d70a6c26101f5722fe5db7fdbe050d2f627a64ad96485db66a8f23",
+      "class_hash": "0x37426dd64cb32e5aa589c49dc66db2fa7959e6b1590898ddf5dd708e0c1c5",
       "abi": [
         {
           "type": "function",

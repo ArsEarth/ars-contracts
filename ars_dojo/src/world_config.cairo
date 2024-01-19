@@ -35,11 +35,11 @@ struct VoxelId {
 struct VoxelIdV1 {
     #[key]
     config_id: u8,
-    base_voxel_id: felt252,
-    r_voxel_id: felt252,
-    g_voxel_id: felt252,
-    b_voxel_id: felt252,
-    balck_voxel_id: felt252,
+    base_voxel_id: u256,
+    r_voxel_id: u256,
+    g_voxel_id: u256,
+    b_voxel_id: u256,
+    balck_voxel_id: u256,
 }
 
 #[derive(Model, Drop, Serde)]
@@ -56,7 +56,7 @@ struct ResourcesCost {
 #[derive(Model, Drop, Serde)]
 struct AssetContract {
     #[key]
-    contract_key: felt252,
+    contract_key: u256,
     contract_type: felt252,
     contract_address: ContractAddress,
 }
@@ -82,14 +82,15 @@ trait ISetupWorld<ContractState> {
     );
     fn set_voxel_id_v1(
         ref self: ContractState,
-        base_voxel_id: felt252,
-        r_voxel_id: felt252,
-        g_voxel_id: felt252,
-        b_voxel_id: felt252,
-        balck_voxel_id: felt252,
+        base_voxel_id: u256,
+        r_voxel_id: u256,
+        g_voxel_id: u256,
+        b_voxel_id: u256,
+        balck_voxel_id: u256,
     );
     fn set_asset_contract(
         ref self: ContractState,
+        keys: Array<u256>,
         types: Array<felt252>,
         address: Array<ContractAddress>,
     );
@@ -168,11 +169,11 @@ mod setup_world {
     #[external(v0)]
     fn set_voxel_id_v1(
         ref self: ContractState,
-        base_voxel_id: felt252,
-        r_voxel_id: felt252,
-        g_voxel_id: felt252,
-        b_voxel_id: felt252,
-        balck_voxel_id: felt252,
+        base_voxel_id: u256,
+        r_voxel_id: u256,
+        g_voxel_id: u256,
+        b_voxel_id: u256,
+        balck_voxel_id: u256,
     ) {
         let world = self.world_dispatcher.read();
         world.only_admins(@get_caller_address());
@@ -195,7 +196,7 @@ mod setup_world {
     #[external(v0)]
     fn set_asset_contract(
         ref self: ContractState,
-        keys: Array<felt252>,
+        keys: Array<u256>,
         types: Array<felt252>,
         addresses: Array<ContractAddress>,
     ) {
