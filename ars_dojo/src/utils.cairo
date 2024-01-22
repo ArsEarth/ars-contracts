@@ -315,7 +315,12 @@ fn mint_new_core(
     fts: Array<FTSpec>,
     shape: Array<PackedShapeItem>,
 ) {
-    let acontract = get!(world, (from_tid), (AssetContract));
+    let mut acontract = get!(world, (from_tid), (AssetContract));
+    if from_tid > 100000000 {
+        let default_core_id: u256 = 1155;
+        acontract = get!(world, (default_core_id), (AssetContract));
+    }
+
     ICalleeCore1155Dispatcher { contract_address: acontract.contract_address }.mint_new(get_caller_address(), from_tid, amount, fts, shape);
 }
 
