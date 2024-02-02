@@ -28,7 +28,6 @@ struct VoxelId {
     r_voxel_id: u256,
     g_voxel_id: u256,
     b_voxel_id: u256,
-    balck_voxel_id: u256,
 }
 
 #[derive(Model, Drop, Serde)]
@@ -39,7 +38,6 @@ struct VoxelIdV1 {
     r_voxel_id: u256,
     g_voxel_id: u256,
     b_voxel_id: u256,
-    balck_voxel_id: u256,
 }
 
 #[derive(Model, Drop, Serde)]
@@ -50,7 +48,6 @@ struct ResourcesCost {
     r_num: u256,
     g_num: u256,
     b_num: u256,
-    black_num: u256,
 }
 
 #[derive(Model, Drop, Serde)]
@@ -70,7 +67,6 @@ trait ISetupWorld<ContractState> {
         r_num: u256,
         g_num: u256,
         b_num: u256,
-        black_num: u256,
     );
     fn set_voxel_id(
         ref self: ContractState,
@@ -78,7 +74,6 @@ trait ISetupWorld<ContractState> {
         r_voxel_id: u256,
         g_voxel_id: u256,
         b_voxel_id: u256,
-        balck_voxel_id: u256,
     );
     fn set_voxel_id_v1(
         ref self: ContractState,
@@ -86,7 +81,6 @@ trait ISetupWorld<ContractState> {
         r_voxel_id: u256,
         g_voxel_id: u256,
         b_voxel_id: u256,
-        balck_voxel_id: u256,
     );
     fn set_asset_contract(
         ref self: ContractState,
@@ -111,7 +105,6 @@ mod setup_world {
         r_num: Array<u256>,
         g_num: Array<u256>,
         b_num: Array<u256>,
-        black_num: Array<u256>,
     ) {
         let world = self.world_dispatcher.read();
         world.only_admins(@get_caller_address());
@@ -131,7 +124,6 @@ mod setup_world {
                     r_num: *r_num.at(i),
                     g_num: *g_num.at(i),
                     b_num: *b_num.at(i),
-                    black_num: *black_num.at(i),
                 })
             );
             i += 1;
@@ -146,7 +138,6 @@ mod setup_world {
         r_voxel_id: u256,
         g_voxel_id: u256,
         b_voxel_id: u256,
-        balck_voxel_id: u256,
     ) {
         let world = self.world_dispatcher.read();
         world.only_admins(@get_caller_address());
@@ -160,7 +151,6 @@ mod setup_world {
                 r_voxel_id,
                 g_voxel_id,
                 b_voxel_id,
-                balck_voxel_id,
             })
         );
         return ();
@@ -173,7 +163,6 @@ mod setup_world {
         r_voxel_id: u256,
         g_voxel_id: u256,
         b_voxel_id: u256,
-        balck_voxel_id: u256,
     ) {
         let world = self.world_dispatcher.read();
         world.only_admins(@get_caller_address());
@@ -187,7 +176,6 @@ mod setup_world {
                 r_voxel_id,
                 g_voxel_id,
                 b_voxel_id,
-                balck_voxel_id,
             })
         );
         return ();

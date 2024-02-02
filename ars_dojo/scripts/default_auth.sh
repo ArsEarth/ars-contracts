@@ -15,10 +15,12 @@ echo actions : $ACTIONS_ADDRESS
 echo "---------------------------------------------------------------------------"
 
 # enable system -> component authorizations
-COMPONENTS=("LastCheck" )
+COMPONENTS=("LastCheck" "LastBuildId" "BuildData" )
 
 for component in ${COMPONENTS[@]}; do
+    echo "sozo auth writer $component $ACTIONS_ADDRESS --world $WORLD_ADDRESS --rpc-url $RPC_URL"
     sozo auth writer $component $ACTIONS_ADDRESS --world $WORLD_ADDRESS --rpc-url $RPC_URL
+    sleep 1
 done
 
 echo "Default authorizations have been successfully set."

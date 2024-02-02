@@ -3,7 +3,7 @@ use integer::u256_from_felt252;
 use ecdsa::check_ecdsa_signature;
 use starknet::contract_address_to_felt252;
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use dojo_ars::models::{LastCheck};
+use dojo_ars::models::{LastCheck, LastBuildId, BuildData};
 use dojo_ars::world_config::{VoxelId, VoxelIdV1, ResourcesCost, AssetContract};
 use starknet::get_caller_address;
 
@@ -105,7 +105,6 @@ struct CostData {
     color_r: u256,
     color_g: u256,
     color_b: u256,
-    color_black: u256,
 }
 
 #[derive(Drop, Serde)]
@@ -114,7 +113,6 @@ struct CoreCostData {
     color_r: u256,
     color_g: u256,
     color_b: u256,
-    color_black: u256,
     core_id: u256,
 }
 
@@ -228,8 +226,6 @@ fn util_mint_build(
     burn_amounts.append(cost_num.g_num);
     burn_ids.append(voxel_ids.b_voxel_id);
     burn_amounts.append(cost_num.b_num);
-    burn_ids.append(voxel_ids.balck_voxel_id);
-    burn_amounts.append(cost_num.black_num);
     
     ICalleeVoxel1155Dispatcher { contract_address: contract_voxel_address }.burn_batch(get_caller_address(), burn_ids, burn_amounts);
     ICalleeBuildDispatcher { contract_address: contract_build_address }.mint(get_caller_address());
@@ -274,7 +270,7 @@ fn util_mint_voxel_by_checks_v1(
         let acontract_address = get!(world, (tokenid), (AssetContract));
         emit !(world, AssetContractEvent{ckey: acontract_address.contract_key, ctype: acontract_address.contract_type, address: acontract_address.contract_address, debuga: 1});
         if acontract_address.contract_type == 20 {
-            ICalleeVoxel20Dispatcher { contract_address: acontract_address.contract_address }.mint(receiver, amount);
+            ICalleeVoxel20Dispatcher { contract_address: acontract_address.contract_address }.mint(receiver, amount * 1000000000000000);
         } else if acontract_address.contract_type == 1155 {
             ICalleeCore1155Dispatcher { contract_address: acontract_address.contract_address }.mint(receiver, tokenid, amount);
         }
@@ -289,23 +285,24 @@ fn util_mint_build_v1(
     from_contract: ContractAddress,
     from_tid: u256,
 ) {
+    let receiver = get_caller_address();
     let config_id: u8 = 1;
     let voxel_ids = get!(world, (config_id), (VoxelIdV1));
     let costdata: CostData = ICalleeBlueprintDispatcher { contract_address: from_contract }.get_costdata(from_tid);
     
     let asset_contract1 = get!(world, (voxel_ids.base_voxel_id), (AssetContract));
-    ICalleeVoxel20Dispatcher { contract_address: asset_contract1.contract_address }.burn(get_caller_address(), costdata.base_block);
+    ICalleeVoxel20Dispatcher { contract_address: asset_contract1.contract_address }.burn(receiver, costdata.base_block);
     let asset_contract2 = get!(world, (voxel_ids.r_voxel_id), (AssetContract));
-    ICalleeVoxel20Dispatcher { contract_address: asset_contract2.contract_address }.burn(get_caller_address(), costdata.color_r);
+    ICalleeVoxel20Dispatcher { contract_address: asset_contract2.contract_address }.burn(receiver, costdata.color_r);
     let asset_contract3 = get!(world, (voxel_ids.g_voxel_id), (AssetContract));
-    ICalleeVoxel20Dispatcher { contract_address: asset_contract3.contract_address }.burn(get_caller_address(), costdata.color_g);
+    ICalleeVoxel20Dispatcher { contract_address: asset_contract3.contract_address }.burn(receiver, costdata.color_g);
     let asset_contract4 = get!(world, (voxel_ids.b_voxel_id), (AssetContract));
-    ICalleeVoxel20Dispatcher { contract_address: asset_contract4.contract_address }.burn(get_caller_address(), costdata.color_b);
-    let asset_contract5 = get!(world, (voxel_ids.balck_voxel_id), (AssetContract));
-    ICalleeVoxel20Dispatcher { contract_address: asset_contract5.contract_address }.burn(get_caller_address(), costdata.color_black);
+    ICalleeVoxel20Dispatcher { contract_address: asset_contract4.contract_address }.burn(receiver, costdata.color_b);
     
-    // let asset_contract = get!(world, 721, (AssetContract));
-    // ICalleeBuildDispatcher { contract_address: asset_contract.contract_address }.mint(get_caller_address());
+    let last_build = get!(world, (receiver), (LastBuildId));
+    let new_build_id = last_build.last_id + 1;
+    set!(world, (LastBuildId { player: receiver, last_id: new_build_id } ));
+    set!(world, (BuildData { player: receiver, build_id: new_build_id, from_id: from_tid, build_type: 1 } ));
 }
 
 fn mint_new_core(
@@ -329,24 +326,28 @@ fn rebuild_core(
     from_tid: u256,
     amount: u256,
 ) {
+    let receiver = get_caller_address();
     let config_id: u8 = 1;
     let voxel_ids = get!(world, (config_id), (VoxelIdV1));
     
     let default_core_id: u256 = 1155;
     let assetcore = get!(world, (default_core_id), (AssetContract));
     let costdata: CoreCostData = ICalleeCore1155Dispatcher { contract_address: assetcore.contract_address }.get_costdata(from_tid);
-    ICalleeCore1155Dispatcher { contract_address: assetcore.contract_address }.burn(get_caller_address(), from_tid, amount);
+    ICalleeCore1155Dispatcher { contract_address: assetcore.contract_address }.burn(receiver, from_tid, amount);
 
     let asset_contract1 = get!(world, (voxel_ids.base_voxel_id), (AssetContract));
-    ICalleeVoxel20Dispatcher { contract_address: asset_contract1.contract_address }.burn(get_caller_address(), costdata.base_block * amount);
+    ICalleeVoxel20Dispatcher { contract_address: asset_contract1.contract_address }.burn(receiver, costdata.base_block * amount);
     let asset_contract2 = get!(world, (voxel_ids.r_voxel_id), (AssetContract));
-    ICalleeVoxel20Dispatcher { contract_address: asset_contract2.contract_address }.burn(get_caller_address(), costdata.color_r * amount);
+    ICalleeVoxel20Dispatcher { contract_address: asset_contract2.contract_address }.burn(receiver, costdata.color_r * amount);
     let asset_contract3 = get!(world, (voxel_ids.g_voxel_id), (AssetContract));
-    ICalleeVoxel20Dispatcher { contract_address: asset_contract3.contract_address }.burn(get_caller_address(), costdata.color_g * amount);
+    ICalleeVoxel20Dispatcher { contract_address: asset_contract3.contract_address }.burn(receiver, costdata.color_g * amount);
     let asset_contract4 = get!(world, (voxel_ids.b_voxel_id), (AssetContract));
-    ICalleeVoxel20Dispatcher { contract_address: asset_contract4.contract_address }.burn(get_caller_address(), costdata.color_b * amount);
-    let asset_contract5 = get!(world, (voxel_ids.balck_voxel_id), (AssetContract));
-    ICalleeVoxel20Dispatcher { contract_address: asset_contract5.contract_address }.burn(get_caller_address(), costdata.color_black * amount);
+    ICalleeVoxel20Dispatcher { contract_address: asset_contract4.contract_address }.burn(receiver, costdata.color_b * amount);
+
+    let last_build = get!(world, (receiver), (LastBuildId));
+    let new_build_id = last_build.last_id + 1;
+    set!(world, (LastBuildId { player: receiver, last_id: new_build_id } ));
+    set!(world, (BuildData { player: receiver, build_id: new_build_id, from_id: from_tid, build_type: 2 } ));
 }
 
 fn debug_init_checks(
