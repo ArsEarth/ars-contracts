@@ -56,6 +56,7 @@ struct AssetContract {
     contract_key: u256,
     contract_type: felt252,
     contract_address: ContractAddress,
+    contract_rate: u256,
 }
 
 #[starknet::interface]
@@ -87,6 +88,7 @@ trait ISetupWorld<ContractState> {
         keys: Array<u256>,
         types: Array<felt252>,
         address: Array<ContractAddress>,
+        rate: Array<u256>,
     );
 }
 
@@ -187,6 +189,7 @@ mod setup_world {
         keys: Array<u256>,
         types: Array<felt252>,
         addresses: Array<ContractAddress>,
+        rate: Array<u256>,
     ) {
         let world = self.world_dispatcher.read();
         world.only_admins(@get_caller_address());
@@ -205,6 +208,7 @@ mod setup_world {
                     contract_key: *keys.at(i),
                     contract_type: *types.at(i),
                     contract_address: *addresses.at(i),
+                    contract_rate: *rate.at(i),
                 })
             );
             i += 1;

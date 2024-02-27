@@ -270,7 +270,7 @@ fn util_mint_voxel_by_checks_v1(
         let acontract_address = get!(world, (tokenid), (AssetContract));
         emit !(world, AssetContractEvent{ckey: acontract_address.contract_key, ctype: acontract_address.contract_type, address: acontract_address.contract_address, debuga: 1});
         if acontract_address.contract_type == 20 {
-            ICalleeVoxel20Dispatcher { contract_address: acontract_address.contract_address }.mint(receiver, amount * 1000000000000000);
+            ICalleeVoxel20Dispatcher { contract_address: acontract_address.contract_address }.mint(receiver, amount * acontract_address.contract_rate);
         } else if acontract_address.contract_type == 1155 {
             ICalleeCore1155Dispatcher { contract_address: acontract_address.contract_address }.mint(receiver, tokenid, amount);
         }

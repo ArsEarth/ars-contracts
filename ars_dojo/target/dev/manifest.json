@@ -949,7 +949,7 @@
     {
       "name": "dojo_ars::actions::actions",
       "address": "0x7d2c57fcec28bd280f5dadf4f8880135a15c7d20c3d99936d5bd58d7c2d4d44",
-      "class_hash": "0x62f817c4b24c05eb95e2ddb01ea2c1ebf0aa24b7552c711b80826e5578d0c08",
+      "class_hash": "0x5be87d79816b6d927ff9c7bb14a1a8b95c719af50601780fe03cc839f01503a",
       "abi": [
         {
           "type": "impl",
@@ -1578,7 +1578,7 @@
     {
       "name": "dojo_ars::world_config::setup_world",
       "address": "0x46c44c3f37044bef70b0745b43a59093f3faec7c403f7f55d0f85438b6e3f7",
-      "class_hash": "0x32b522adbceb5beb653ae806a94474f25cb93b7123dca727c732ef7e6eb074",
+      "class_hash": "0x5a2e9d711b5b5e95f3056d344be9cf1386e46267d8f0926f218bcba469d5a88",
       "abi": [
         {
           "type": "impl",
@@ -1751,6 +1751,10 @@
             {
               "name": "addresses",
               "type": "core::array::Array::<core::starknet::contract_address::ContractAddress>"
+            },
+            {
+              "name": "rate",
+              "type": "core::array::Array::<core::integer::u256>"
             }
           ],
           "outputs": [],
@@ -2362,9 +2366,14 @@
           "name": "contract_address",
           "type": "ContractAddress",
           "key": false
+        },
+        {
+          "name": "contract_rate",
+          "type": "u256",
+          "key": false
         }
       ],
-      "class_hash": "0x640896d124ed0f7b379729c3df1cb65a50a3520c0c65d1e9d3b9057a9c348fd",
+      "class_hash": "0x5c4da9c9120691ee5a3a568ef22a1b899c688520e8eee0290862a1e71d1b376",
       "abi": [
         {
           "type": "function",
