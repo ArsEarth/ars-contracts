@@ -292,12 +292,6 @@ fn util_mint_build_v1(
     
     let asset_contract1 = get!(world, (voxel_ids.base_voxel_id), (AssetContract));
     ICalleeVoxel20Dispatcher { contract_address: asset_contract1.contract_address }.burn(receiver, costdata.base_block);
-    let asset_contract2 = get!(world, (voxel_ids.r_voxel_id), (AssetContract));
-    ICalleeVoxel20Dispatcher { contract_address: asset_contract2.contract_address }.burn(receiver, costdata.color_r);
-    let asset_contract3 = get!(world, (voxel_ids.g_voxel_id), (AssetContract));
-    ICalleeVoxel20Dispatcher { contract_address: asset_contract3.contract_address }.burn(receiver, costdata.color_g);
-    let asset_contract4 = get!(world, (voxel_ids.b_voxel_id), (AssetContract));
-    ICalleeVoxel20Dispatcher { contract_address: asset_contract4.contract_address }.burn(receiver, costdata.color_b);
     
     let last_build = get!(world, (receiver), (LastBuildId));
     let new_build_id = last_build.last_id + 1;
@@ -337,12 +331,6 @@ fn rebuild_core(
 
     let asset_contract1 = get!(world, (voxel_ids.base_voxel_id), (AssetContract));
     ICalleeVoxel20Dispatcher { contract_address: asset_contract1.contract_address }.burn(receiver, costdata.base_block * amount);
-    let asset_contract2 = get!(world, (voxel_ids.r_voxel_id), (AssetContract));
-    ICalleeVoxel20Dispatcher { contract_address: asset_contract2.contract_address }.burn(receiver, costdata.color_r * amount);
-    let asset_contract3 = get!(world, (voxel_ids.g_voxel_id), (AssetContract));
-    ICalleeVoxel20Dispatcher { contract_address: asset_contract3.contract_address }.burn(receiver, costdata.color_g * amount);
-    let asset_contract4 = get!(world, (voxel_ids.b_voxel_id), (AssetContract));
-    ICalleeVoxel20Dispatcher { contract_address: asset_contract4.contract_address }.burn(receiver, costdata.color_b * amount);
 
     let last_build = get!(world, (receiver), (LastBuildId));
     let new_build_id = last_build.last_id + 1;

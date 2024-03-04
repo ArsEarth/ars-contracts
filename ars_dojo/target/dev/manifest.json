@@ -949,7 +949,7 @@
     {
       "name": "dojo_ars::actions::actions",
       "address": "0x7d2c57fcec28bd280f5dadf4f8880135a15c7d20c3d99936d5bd58d7c2d4d44",
-      "class_hash": "0x5be87d79816b6d927ff9c7bb14a1a8b95c719af50601780fe03cc839f01503a",
+      "class_hash": "0x291ce81f35ffa3e3d189ab91a87c59a2ab8884572d78e3fea0c6fecb99bc683",
       "abi": [
         {
           "type": "impl",
