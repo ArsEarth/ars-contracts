@@ -949,7 +949,7 @@
     {
       "name": "dojo_ars::actions::actions",
       "address": "0x7d2c57fcec28bd280f5dadf4f8880135a15c7d20c3d99936d5bd58d7c2d4d44",
-      "class_hash": "0x291ce81f35ffa3e3d189ab91a87c59a2ab8884572d78e3fea0c6fecb99bc683",
+      "class_hash": "0x6781410a291a5efc5fd5764a3f61e51013d87f8a9228b965cdf2382c27881a2",
       "abi": [
         {
           "type": "impl",
@@ -1817,6 +1817,11 @@
           "key": true
         },
         {
+          "name": "contract_address",
+          "type": "ContractAddress",
+          "key": false
+        },
+        {
           "name": "from_id",
           "type": "u256",
           "key": false
@@ -1827,7 +1832,7 @@
           "key": false
         }
       ],
-      "class_hash": "0x26a8d6b90ea6904a24900ea3e0ceba3ce67b53174af249adafe5d83df515e7a",
+      "class_hash": "0x13eeabd794301836e03c685901fd84df7050bacd33e5181ab72b9ce08c417ef",
       "abi": [
         {
           "type": "function",

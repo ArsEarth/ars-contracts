@@ -296,7 +296,7 @@ fn util_mint_build_v1(
     let last_build = get!(world, (receiver), (LastBuildId));
     let new_build_id = last_build.last_id + 1;
     set!(world, (LastBuildId { player: receiver, last_id: new_build_id } ));
-    set!(world, (BuildData { player: receiver, build_id: new_build_id, from_id: from_tid, build_type: 1 } ));
+    set!(world, (BuildData { player: receiver, build_id: new_build_id, contract_address:from_contract, from_id: from_tid, build_type: 1 } ));
 }
 
 fn mint_new_core(
@@ -335,7 +335,7 @@ fn rebuild_core(
     let last_build = get!(world, (receiver), (LastBuildId));
     let new_build_id = last_build.last_id + 1;
     set!(world, (LastBuildId { player: receiver, last_id: new_build_id } ));
-    set!(world, (BuildData { player: receiver, build_id: new_build_id, from_id: from_tid, build_type: 2 } ));
+    set!(world, (BuildData { player: receiver, build_id: new_build_id, contract_address:assetcore.contract_address, from_id: from_tid, build_type: 2 } ));
 }
 
 fn debug_init_checks(

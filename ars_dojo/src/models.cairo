@@ -22,6 +22,7 @@ struct BuildData {
     player: ContractAddress,
     #[key]
     build_id: u256,
+    contract_address: ContractAddress,
     from_id: u256,
     build_type: u64,
 }
