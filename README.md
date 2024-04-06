@@ -1,20 +1,20 @@
-# Ars.Earth Contracts
+# XAR.Space Contracts
 
-**This repository includes the Cairo and Dojo code for the Ars.Earth contracts.**
+**This repository includes the Cairo and Dojo code for the XAR.Space contracts.**
 
 ## Intro
-Ars.Earth is the Augmented World where Augmented Reality(AR) meets Blockchain. 
+XAR.Space is the Augmented World where Augmented Reality(AR) meets Blockchain. 
 
-In this new version, we aim to support the Briq Protocol. That means stuffs you build using Briq can now be turned into blueprints in the Ars World. Players can use these blueprints to construct creations and show them off in the real world. We demonstrated this gameplay with the Ducks Everywhere NFT Collection as an example. 
+In this new version, we aim to support the Briq Protocol. That means stuffs you build using Briq can now be turned into blueprints in the AR World. Players can use these blueprints to construct creations and show them off in the real world. We demonstrated this gameplay with the Ducks Everywhere NFT Collection as an example. 
 
-In Ars World, everything is made with Voxels and Pigments. To get these materials, you gonna step into the real world to collect them. Then, enter the Blueprint Store in the game, build whatever you like, and show it off in the real world.
+In AR World, everything is made with Voxels and Pigments. To get these materials, you gonna step into the real world to collect them. Then, enter the Blueprint Store in the game, build whatever you like, and show it off in the real world.
 
 We're cooking up some fun ways for you to play around with these items in future updates, like maybe taking a shot at them!
 
 
 ## Directory Explanation
-- ars_dojo  
-  Ars' Dojo World
+- xar_dojo  
+  XAR' Dojo World
 - asset  
   Contracts related to assets, temporarily independent of the dojo.  
   - build721  
@@ -24,7 +24,7 @@ We're cooking up some fun ways for you to play around with these items in future
   - core1155  
   The core asset contract collected, adheres to ERC1155 rules, which is not used for now.
 ## Complie Contracts
-- Ars_dojo
+- xar_dojo
   ```
   sozo build
   sozo migrate
@@ -68,10 +68,10 @@ IOS: https://testflight.apple.com/join/smDJLIHx
 Android: https://drive.google.com/drive/folders/1oi8DtYikHiCDYonJnXAOW-r7PAfdoEJX
 
 ## Key Links
-Website: https://ars.earth/ 
+Website: https://XAR.Space/ 
 
-Codex: https://codex.ars.earth/
+Codex: https://codex.XAR.Space/
 
-Twitter: https://twitter.com/Ars_Earth
+Twitter: https://twitter.com/XAR_Labs
 
 Discord: https://discord.gg/CzrmueueNt
