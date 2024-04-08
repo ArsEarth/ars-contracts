@@ -80,9 +80,13 @@ Android: https://drive.google.com/drive/folders/1oi8DtYikHiCDYonJnXAOW-r7PAfdoEJ
 
 ## Useful links:
 Website: https://www.xar.space/
+
 X: https://twitter.com/XAR_Labs
+
 Mirror: https://mirror.xyz/xarlabs.eth
+
 Youtube: https://www.youtube.com/@XARLABS
+
 Litepaper: https://xar.gitbook.io/litepaper
-ios download: https://testflight.apple.com/join/smDJLIHx
-Google Play download: https://img.xar.space/apk/XAR.apk
+
+
