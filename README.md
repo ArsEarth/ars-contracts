@@ -78,11 +78,11 @@ IOS: https://testflight.apple.com/join/smDJLIHx
 
 Android: https://drive.google.com/drive/folders/1oi8DtYikHiCDYonJnXAOW-r7PAfdoEJX
 
-## Key Links
-Website: https://XAR.Space/ 
-
-Codex: https://codex.XAR.Space/
-
-Twitter: https://twitter.com/XAR_Labs
-
-Discord: https://discord.gg/CzrmueueNt
+## Useful links:
+Website: https://www.xar.space/
+X: https://twitter.com/XAR_Labs
+Mirror: https://mirror.xyz/xarlabs.eth
+Youtube: https://www.youtube.com/@XARLABS
+Litepaper: https://xar.gitbook.io/litepaper
+ios download: https://testflight.apple.com/join/smDJLIHx
+Google Play download: https://img.xar.space/apk/XAR.apk
