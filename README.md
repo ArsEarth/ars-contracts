@@ -1,3 +1,14 @@
+To the Solana Renaissance Hackathon judges:
+
+We are currently utilizing Cairo and are a leading project in the Starknet ecosystem. However, we are highly interested in exploring opportunities on Solana and are open to migrating our platform to it, which is why we have registered for this hackathon. 
+
+Our AR product is market-ready and has already conducted successful campaigns, attracting significant organic traffic without incentives (as detailed in Section 6 of our Deck). 
+
+Our development team is proficient in Rust(through this code, you can see our technical strength), ensuring that transitioning to Solana could be completed in less than a month.
+
+We believe this social platform, with its brand-new AR visual experience, a voxel world fully destructible like Minecraft, and collaborations with other projects to drive significant traffic, will surely create a new wave of alpha on Solana.
+
+
 # XAR.Space Contracts
 
 **This repository includes the Cairo and Dojo code for the XAR.Space contracts.**
