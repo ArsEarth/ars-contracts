@@ -1,6 +1,7 @@
 #target
 #sierra
 *DS_Store*
+asset/*/target
 
 # Logs
 logs
