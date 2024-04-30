@@ -66,10 +66,10 @@ We're cooking up some fun ways for you to play around with these items in future
 ## Have try
 IOS: https://testflight.apple.com/join/smDJLIHx
 
-Android: https://img.xar.space/apk/XAR.apk
+Android: https://resources.x.ar/apk/XAR.apk
 
 ## Useful links:
-Website: https://www.xar.space/
+Website: https://www.x.ar/
 
 X: https://twitter.com/XAR_Labs
 
