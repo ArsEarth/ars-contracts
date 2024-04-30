@@ -18,16 +18,16 @@ We're cooking up some fun ways for you to play around with these items in future
   XAR' Dojo World
 - asset  
   Contracts related to assets, temporarily independent of the dojo. 
-  - account
-  Modified from the OpenZeppelin Wallet contract version 0.8.0, the account contract supports two sets of public and private keys and allows for the modification of the public key..
-  - xar20
+  - account  
+  Modified from the OpenZeppelin Wallet contract version 0.8.0, the account contract supports two sets of public and private keys and allows for the modification of the public key.
+  - xar20  
   Based on the OpenZeppelin ERC20 contract.  
   - blueprint721  
   The blueprint contract obtained after build, adheres to ERC721 rules.
   - blueprint721_offical  
   Official Blueprint Contract.
   - core1155  
-  The core asset contract collected, adheres to ERC1155 rules, which is not used for now.
+  The core asset contract collected, adheres to ERC1155 rules.
 ## Complie Contracts
 - xar_dojo
   ```
