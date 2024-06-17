@@ -4,7 +4,7 @@ use ecdsa::check_ecdsa_signature;
 use starknet::contract_address_to_felt252;
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 use dojo_ars::models::{LastCheck, LastBuildId, BuildData};
-use dojo_ars::world_config::{VoxelId, VoxelIdV1, ResourcesCost, AssetContract};
+use dojo_ars::world_config::{VoxelIdV1, AssetContract};
 use starknet::get_caller_address;
 
 #[starknet::interface]
