@@ -121,6 +121,7 @@ struct CoreCostData {
 #[derive(Drop, starknet::Event)]
 enum Event {
     AssetContractEvent: AssetContractEvent,
+    InventionLog: InventionLog,
 }
 
 #[derive(Drop, starknet::Event)]
@@ -129,6 +130,12 @@ struct AssetContractEvent {
     ctype: felt252,
     address: ContractAddress,
     debuga: felt252,
+}
+
+#[derive(Drop, starknet::Event)]
+struct InventionLog {
+    sid: felt252,
+    address: ContractAddress,
 }
 
 fn verifySign(
@@ -228,43 +235,39 @@ fn util_mint_build_v1(
     set!(world, (BuildData { player: receiver, build_id: new_build_id, contract_address:from_contract, from_id: from_tid, build_type: 1 } ));
 }
 
-fn mint_new_core(
+fn create_invention(
     world: IWorldDispatcher,
-    from_tid: u256,
-    amount: u256,
-    fts: Array<FTSpec>,
-    shape: Array<PackedShapeItem>,
+    public_key: felt252,
+    issuer: felt252,
+    sid: felt252,
+    voxel_num: felt252,
+    r: felt252,
+    s: felt252,
 ) {
-    let mut acontract = get!(world, (from_tid), (AssetContract));
-    if from_tid > 100000000 {
-        let default_core_id: u256 = 1155;
-        acontract = get!(world, (default_core_id), (AssetContract));
-    }
-
-    ICalleeCore1155Dispatcher { contract_address: acontract.contract_address }.mint_new(get_caller_address(), from_tid, amount, fts, shape);
+    assert(verify_invention(public_key, issuer, sid, voxel_num, r, s) == starknet::VALIDATED, 'valid failed');
+    emit !(world, InventionLog{sid: sid, address: get_caller_address()});
 }
 
-fn rebuild_core(
-    world: IWorldDispatcher,
-    from_tid: u256,
-    amount: u256,
-) {
-    let receiver = get_caller_address();
-    let config_id: u8 = 1;
-    let voxel_ids = get!(world, (config_id), (VoxelIdV1));
-    
-    let default_core_id: u256 = 1155;
-    let assetcore = get!(world, (default_core_id), (AssetContract));
-    let costdata: CoreCostData = ICalleeCore1155Dispatcher { contract_address: assetcore.contract_address }.get_costdata(from_tid);
-    ICalleeCore1155Dispatcher { contract_address: assetcore.contract_address }.burn(receiver, from_tid, amount);
-
-    let asset_contract1 = get!(world, (voxel_ids.base_voxel_id), (AssetContract));
-    ICalleeVoxel20Dispatcher { contract_address: asset_contract1.contract_address }.burn(receiver, costdata.base_block * amount);
-
-    let last_build = get!(world, (receiver), (LastBuildId));
-    let new_build_id = last_build.last_id + 1;
-    set!(world, (LastBuildId { player: receiver, last_id: new_build_id } ));
-    set!(world, (BuildData { player: receiver, build_id: new_build_id, contract_address:assetcore.contract_address, from_id: from_tid, build_type: 2 } ));
+fn verify_invention(
+    issur_public_key: felt252,
+    issuer: felt252,
+    sid: felt252,
+    voxel_num: felt252,
+    r: felt252,
+    s: felt252
+) -> felt252 {
+    let caller = get_caller_address();
+    let message_hash = pedersen::pedersen(pedersen::pedersen(pedersen::pedersen(issuer, sid), voxel_num), contract_address_to_felt252(caller));
+    assert(
+        check_ecdsa_signature(
+            message_hash: message_hash,
+            public_key: issur_public_key,
+            signature_r: r,
+            signature_s: s,
+        ),
+        'INVALID_SIGNATURE',
+    );
+    starknet::VALIDATED
 }
 
 fn debug_init_checks(

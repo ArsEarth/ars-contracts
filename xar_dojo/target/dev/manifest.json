@@ -949,7 +949,7 @@
     {
       "name": "dojo_ars::actions::actions",
       "address": "0x7d2c57fcec28bd280f5dadf4f8880135a15c7d20c3d99936d5bd58d7c2d4d44",
-      "class_hash": "0x2ef3f593a6b40c7a78448740b8fbe859ed572f8970545cb81cea07319a76d5a",
+      "class_hash": "0x46b561e53edf897d7eaee2cbb05562fdc79a13be32226c63c1d3eb97e3128c5",
       "abi": [
         {
           "type": "impl",
@@ -999,38 +999,6 @@
             {
               "name": "high",
               "type": "core::integer::u128"
-            }
-          ]
-        },
-        {
-          "type": "struct",
-          "name": "dojo_ars::utils::FTSpec",
-          "members": [
-            {
-              "name": "token_id",
-              "type": "core::felt252"
-            },
-            {
-              "name": "qty",
-              "type": "core::integer::u128"
-            }
-          ]
-        },
-        {
-          "type": "struct",
-          "name": "dojo_ars::utils::PackedShapeItem",
-          "members": [
-            {
-              "name": "color",
-              "type": "core::felt252"
-            },
-            {
-              "name": "material",
-              "type": "core::integer::u64"
-            },
-            {
-              "name": "x_y_z",
-              "type": "core::felt252"
             }
           ]
         },
@@ -1184,24 +1152,8 @@
             },
             {
               "type": "function",
-              "name": "mint_new_core_with_checks",
+              "name": "create_invention",
               "inputs": [
-                {
-                  "name": "from_tid",
-                  "type": "core::integer::u256"
-                },
-                {
-                  "name": "amount",
-                  "type": "core::integer::u256"
-                },
-                {
-                  "name": "fts",
-                  "type": "core::array::Array::<dojo_ars::utils::FTSpec>"
-                },
-                {
-                  "name": "shape",
-                  "type": "core::array::Array::<dojo_ars::utils::PackedShapeItem>"
-                },
                 {
                   "name": "public_key",
                   "type": "core::felt252"
@@ -1211,140 +1163,20 @@
                   "type": "core::felt252"
                 },
                 {
-                  "name": "receiver",
-                  "type": "core::starknet::contract_address::ContractAddress"
-                },
-                {
-                  "name": "tid",
-                  "type": "core::array::Array::<core::felt252>"
-                },
-                {
-                  "name": "startid",
-                  "type": "core::array::Array::<core::felt252>"
-                },
-                {
-                  "name": "endid",
-                  "type": "core::array::Array::<core::felt252>"
-                },
-                {
-                  "name": "amt",
-                  "type": "core::array::Array::<core::felt252>"
-                },
-                {
-                  "name": "t721id",
-                  "type": "core::array::Array::<core::felt252>"
-                },
-                {
-                  "name": "remove_block",
-                  "type": "core::array::Array::<core::felt252>"
-                },
-                {
-                  "name": "r",
-                  "type": "core::array::Array::<core::felt252>"
-                },
-                {
-                  "name": "s",
-                  "type": "core::array::Array::<core::felt252>"
-                }
-              ],
-              "outputs": [],
-              "state_mutability": "view"
-            },
-            {
-              "type": "function",
-              "name": "mint_new_core",
-              "inputs": [
-                {
-                  "name": "from_tid",
-                  "type": "core::integer::u256"
-                },
-                {
-                  "name": "amount",
-                  "type": "core::integer::u256"
-                },
-                {
-                  "name": "fts",
-                  "type": "core::array::Array::<dojo_ars::utils::FTSpec>"
-                },
-                {
-                  "name": "shape",
-                  "type": "core::array::Array::<dojo_ars::utils::PackedShapeItem>"
-                }
-              ],
-              "outputs": [],
-              "state_mutability": "view"
-            },
-            {
-              "type": "function",
-              "name": "rebuild_core_with_checks",
-              "inputs": [
-                {
-                  "name": "from_tid",
-                  "type": "core::integer::u256"
-                },
-                {
-                  "name": "amount",
-                  "type": "core::integer::u256"
-                },
-                {
-                  "name": "public_key",
+                  "name": "sid",
                   "type": "core::felt252"
                 },
                 {
-                  "name": "issuer",
+                  "name": "voxel_num",
                   "type": "core::felt252"
                 },
                 {
-                  "name": "receiver",
-                  "type": "core::starknet::contract_address::ContractAddress"
-                },
-                {
-                  "name": "tid",
-                  "type": "core::array::Array::<core::felt252>"
-                },
-                {
-                  "name": "startid",
-                  "type": "core::array::Array::<core::felt252>"
-                },
-                {
-                  "name": "endid",
-                  "type": "core::array::Array::<core::felt252>"
-                },
-                {
-                  "name": "amt",
-                  "type": "core::array::Array::<core::felt252>"
-                },
-                {
-                  "name": "t721id",
-                  "type": "core::array::Array::<core::felt252>"
-                },
-                {
-                  "name": "remove_block",
-                  "type": "core::array::Array::<core::felt252>"
-                },
-                {
                   "name": "r",
-                  "type": "core::array::Array::<core::felt252>"
+                  "type": "core::felt252"
                 },
                 {
                   "name": "s",
-                  "type": "core::array::Array::<core::felt252>"
-                }
-              ],
-              "outputs": [],
-              "state_mutability": "view"
-            },
-            {
-              "type": "function",
-              "name": "rebuild_core",
-              "inputs": [
-                {
-                  "name": "from_tid",
-                  "type": "core::integer::u256"
-                },
-                {
-                  "name": "amount",
-                  "type": "core::integer::u256"
+                  "type": "core::felt252"
                 }
               ],
               "outputs": [],
