@@ -235,7 +235,7 @@ fn util_mint_build_v1(
     set!(world, (BuildData { player: receiver, build_id: new_build_id, contract_address:from_contract, from_id: from_tid, build_type: 1 } ));
 }
 
-fn create_invention(
+fn create_build_from_invention(
     world: IWorldDispatcher,
     public_key: felt252,
     issuer: felt252,
@@ -245,11 +245,17 @@ fn create_invention(
     s: felt252,
 ) {
     assert(verify_invention(public_key, issuer, sid, voxel_num, r, s) == starknet::VALIDATED, 'valid failed');
+    let config_id: u8 = 1;
+    let voxel_ids = get!(world, (config_id), (VoxelIdV1));
+    
+    let asset_contract1 = get!(world, (voxel_ids.base_voxel_id), (AssetContract));
+    ICalleeVoxel20Dispatcher { contract_address: asset_contract1.contract_address }.burn(get_caller_address(), u256_from_felt252(voxel_num));
+    
     emit !(world, InventionLog{sid: sid, address: get_caller_address()});
 }
 
 fn verify_invention(
-    issur_public_key: felt252,
+    issuer_public_key: felt252,
     issuer: felt252,
     sid: felt252,
     voxel_num: felt252,
@@ -261,7 +267,7 @@ fn verify_invention(
     assert(
         check_ecdsa_signature(
             message_hash: message_hash,
-            public_key: issur_public_key,
+            public_key: issuer_public_key,
             signature_r: r,
             signature_s: s,
         ),

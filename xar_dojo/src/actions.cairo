@@ -46,8 +46,26 @@ trait IActions<TContractState> {
         from_tid: u256,
         from_contract: ContractAddress,
     );
+    fn create_build_with_checks (
+        self: @TContractState,
+        public_key: felt252,
+        issuer: felt252,
+        receiver: ContractAddress,
+        tid: Array<felt252>,
+        startid: Array<felt252>,
+        endid: Array<felt252>,
+        amt: Array<felt252>,
+        t721id: Array<felt252>,
+        remove_block: Array<felt252>,
+        checks_r: Array<felt252>,
+        checks_s: Array<felt252>,
+        sid: felt252,
+        voxel_num: felt252,
+        r: felt252,
+        s: felt252,
+    );
     
-    fn create_invention (
+    fn create_build (
         self: @TContractState,
         public_key: felt252,
         issuer: felt252,
@@ -65,7 +83,7 @@ mod actions {
     use starknet::{ContractAddress, get_caller_address};
     use integer::u256_from_felt252;
     use dojo_ars::utils::{PackedShapeItem, FTSpec};
-    use dojo_ars::utils::{util_mint_voxel_by_checks_v1, util_mint_build_v1, debug_init_checks, create_invention};
+    use dojo_ars::utils::{util_mint_voxel_by_checks_v1, util_mint_build_v1, debug_init_checks, create_build_from_invention};
     use super::IActions;
     use dojo_ars::models::{LastCheck};
     use dojo_ars::utils::{ICalleeVoxel1155Dispatcher, ICalleeVoxel1155DispatcherTrait};
@@ -162,7 +180,44 @@ mod actions {
             util_mint_build_v1(world, from_contract, from_tid)
         }
 
-        fn create_invention (
+        fn create_build_with_checks (
+            self: @ContractState,
+            public_key: felt252,
+            issuer: felt252,
+            receiver: ContractAddress,
+            tid: Array<felt252>,
+            startid: Array<felt252>,
+            endid: Array<felt252>,
+            amt: Array<felt252>,
+            t721id: Array<felt252>,
+            remove_block: Array<felt252>,
+            checks_r: Array<felt252>,
+            checks_s: Array<felt252>,
+            sid: felt252,
+            voxel_num: felt252,
+            r: felt252,
+            s: felt252,
+        ) {
+            let world = self.world_dispatcher.read();
+            util_mint_voxel_by_checks_v1(
+                world,
+                public_key,
+                issuer,
+                receiver,
+                tid,
+                startid,
+                endid,
+                amt,
+                t721id,
+                remove_block,
+                checks_r,
+                checks_s,
+            );
+
+            create_build_from_invention(world, public_key, issuer, sid, voxel_num, r, s)
+        }
+
+        fn create_build (
             self: @ContractState,
             public_key: felt252,
             issuer: felt252,
@@ -172,7 +227,7 @@ mod actions {
             s: felt252,
         ) {
             let world = self.world_dispatcher.read();
-            create_invention(world, public_key, issuer, sid, voxel_num, r, s)
+            create_build_from_invention(world, public_key, issuer, sid, voxel_num, r, s)
         }
 
     }
