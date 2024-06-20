@@ -271,7 +271,7 @@ fn verify_invention(
             signature_r: r,
             signature_s: s,
         ),
-        'INVALID_SIGNATURE',
+        'invention INVALID_SIGNATURE',
     );
     starknet::VALIDATED
 }
